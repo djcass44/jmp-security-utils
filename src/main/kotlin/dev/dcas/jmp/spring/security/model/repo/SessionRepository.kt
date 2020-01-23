@@ -1,0 +1,24 @@
+/*
+ *   This Source Code Form is subject to the terms of the Mozilla Public
+ *   License, v. 2.0. If a copy of the MPL was not distributed with this
+ *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+/*
+ *   This Source Code Form is subject to the terms of the Mozilla Public
+ *   License, v. 2.0. If a copy of the MPL was not distributed with this
+ *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+package dev.dcas.jmp.spring.security.model.repo
+
+import dev.dcas.jmp.spring.security.model.entity.SessionEntity
+import dev.dcas.jmp.spring.security.model.entity.UserEntity
+
+interface SessionRepository {
+    fun findFirstByRefreshTokenAndActiveTrue(token: String): SessionEntity?
+    fun findFirstByRequestTokenAndActiveTrue(token: String): SessionEntity?
+
+    fun disable(session: SessionEntity): SessionEntity
+    fun create(requestToken: String, refreshToken: String, user: UserEntity)
+}
