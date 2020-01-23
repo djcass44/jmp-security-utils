@@ -8,9 +8,9 @@ package dev.dcas.jmp.spring.security.jwt
 
 import dev.castive.log2.loge
 import dev.dcas.jmp.spring.security.SecurityConstants
-import dev.dcas.jmp.spring.security.UserDetails
 import dev.dcas.jmp.spring.security.model.TokenProvider
 import dev.dcas.jmp.spring.security.props.JwtProps
+import dev.dcas.jmp.spring.security.service.UserDetailsService
 import dev.dcas.util.extend.ellipsize
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest
 @Component
 class JwtTokenProvider @Autowired constructor(
     private val jwtProps: JwtProps,
-    private val userDetails: UserDetails
+    private val userDetailsService: UserDetailsService
 ): TokenProvider {
     fun createRequestToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, jwtProps.requestLimit)
     fun createRefreshToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, jwtProps.refreshLimit)
@@ -49,7 +49,7 @@ class JwtTokenProvider @Autowired constructor(
     }
 
     override fun getAuthentication(token: String): Authentication? {
-        val user = userDetails.loadUserByUsername(getUsername(token) ?: return null) ?: return null
+        val user = userDetailsService.loadUserByUsername(getUsername(token) ?: return null) ?: return null
         return UsernamePasswordAuthenticationToken(user, "", user.authorities)
     }
 

@@ -1,0 +1,22 @@
+# relevant config properties
+spring:
+  ldap:
+    enabled: false
+security:
+  token:
+    age-limit: 6
+    age-tick: 10000
+  jwt:
+    secretKey: "password"
+    requestLimit: 3600000
+    refreshLimit: 86400000
+    leeway: 3600000
+  allowCors: false
+  oauth2:
+    - name: github
+      enabled: false
+      apiUrl: https://api.github.com
+      callbackUrl: https://my.app/callback
+      scope: "read:user"
+      clientId: 1234
+      clientSecret: 123456

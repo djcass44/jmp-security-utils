@@ -12,10 +12,8 @@
 
 package dev.dcas.jmp.spring.security.model.repo
 
-import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
 import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
-import org.springframework.security.crypto.password.PasswordEncoder
 
 interface SessionRepository {
     fun findFirstByRefreshTokenAndActiveTrue(token: String): SessionEntity?
@@ -25,6 +23,5 @@ interface SessionRepository {
 
     fun disable(session: SessionEntity): SessionEntity
     fun create(requestToken: String, refreshToken: String, user: UserEntity): SessionEntity
-    fun create(user: UserEntity, provider: JwtTokenProvider, passwordEncoder: PasswordEncoder): Triple<SessionEntity, String, String>
     fun update(session: SessionEntity): SessionEntity
 }

@@ -24,6 +24,7 @@ import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.util.cache.TimedCache
 import dev.dcas.util.extend.ellipsize
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -38,10 +39,14 @@ class OAuth2TokenProvider @Autowired constructor(
     private val groupRepo: GroupRepository,
     private val sessionRepo: SessionRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    @Value("\${security.token.age-limit:6}")
+    private val ageLimit: Int,
+    @Value("\${security.token.age-tick:10000}")
+    private val tickDelay: Long
 ): TokenProvider {
     // hold tokens for 60 seconds (tick every 10)
-    private val tokenCache = TimedCache<String, String>(6, tickDelay = 10_000L)
+    private val tokenCache = TimedCache<String, String>(ageLimit, null, tickDelay)
     private var counter = 0
 
     private val providers = mutableSetOf<AbstractOAuth2Provider>()

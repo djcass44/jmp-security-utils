@@ -16,6 +16,5 @@ import org.springframework.context.annotation.Configuration
 @ConfigurationProperties(prefix = "security")
 data class SecurityProps(
     val oauth2: List<ProviderConfig> = listOf(),
-    val allowCors: Boolean = false,
-    val baseUrl: String = "http://localhost:8080"
+    val allowCors: Boolean = false
 )

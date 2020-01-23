@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserDetails @Autowired constructor(
+class UserDetailsService @Autowired constructor(
     private val userRepo: UserRepository
 ): UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails? {
