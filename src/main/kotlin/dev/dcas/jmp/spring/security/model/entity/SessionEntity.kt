@@ -12,6 +12,9 @@
 
 package dev.dcas.jmp.spring.security.model.entity
 
+import java.util.*
+
 interface SessionEntity {
+    val id: UUID
     val user: UserEntity
 }

@@ -6,8 +6,7 @@
 
 package dev.dcas.jmp.spring.security.util
 
-object Responses {
-    const val NOT_FOUND_USER = "That user could not be found."
-    const val NOT_FOUND_PROVIDER = "That provider could not be found."
-    const val NOT_FOUND_SESSION = "That session could not be found."
-}
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
+
+class BadRequestResponse(message: String = "Bad request."): ResponseStatusException(HttpStatus.BAD_REQUEST, message)

@@ -15,6 +15,6 @@ class JwtFilterConfig(private val provider: JwtTokenProvider):
     SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(builder: HttpSecurity) {
-        builder.addFilterBefore(JwtFilter(provider), OAuth2Filter::class.java)
+        builder.addFilter(JwtFilter(provider))
     }
 }

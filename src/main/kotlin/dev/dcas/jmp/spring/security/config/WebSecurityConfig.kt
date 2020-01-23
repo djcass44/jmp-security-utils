@@ -7,12 +7,9 @@
 package dev.dcas.jmp.spring.security.config
 
 import dev.castive.log2.loga
-import dev.dcas.jmp.spring.security.filter.JwtFilterConfig
-import dev.dcas.jmp.spring.security.filter.OAuth2FilterConfig
-import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
-import dev.dcas.jmp.spring.security.oauth2.OAuth2TokenProvider
 import dev.dcas.jmp.spring.security.props.SecurityProps
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -30,8 +27,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 class WebSecurityConfig @Autowired constructor(
-    private val jwtProvider: JwtTokenProvider,
-    private val oauth2TokenProvider: OAuth2TokenProvider,
     private val securityProps: SecurityProps
 ): WebSecurityConfigurerAdapter() {
 
@@ -50,10 +45,6 @@ class WebSecurityConfig @Autowired constructor(
 
         // entrypoints
         http.authorizeRequests().anyRequest().permitAll()
-
-        // apply jwt, oauth2 filters
-        http.apply(OAuth2FilterConfig(oauth2TokenProvider))
-        http.apply(JwtFilterConfig(jwtProvider))
     }
 
     override fun configure(web: WebSecurity) {
@@ -68,6 +59,7 @@ class WebSecurityConfig @Autowired constructor(
         )
     }
 
+    @ConditionalOnMissingBean(CorsConfigurationSource::class)
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         return UrlBasedCorsConfigurationSource().apply {

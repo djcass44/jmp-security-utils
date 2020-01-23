@@ -18,6 +18,7 @@ import dev.dcas.jmp.spring.security.model.entity.UserEntity
 // this should be a no-op overridable bean
 interface UserRepository {
     fun findFirstByUsername(username: String): UserEntity?
+    fun findFirstByUsernameAndSource(username: String, source: String): UserEntity?
     fun existsByUsername(username: String): Boolean
     fun update(data: UserProjection): UserEntity
 

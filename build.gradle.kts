@@ -41,6 +41,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-configuration-processor")
 
     // misc
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
     implementation("com.github.djcass44:log2:4.1")
     implementation("com.github.djcass44:castive-utilities:v4.1")
     implementation("io.jsonwebtoken:jjwt:0.7.0")

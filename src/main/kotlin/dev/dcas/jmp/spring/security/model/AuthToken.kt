@@ -6,13 +6,8 @@
 
 package dev.dcas.jmp.spring.security.model
 
-data class UserProjection(
-    val username: String,
-    val displayName: String,
-    val avatarUrl: String?,
-    val source: String
+data class AuthToken(
+    val request: String,
+    val refresh: String,
+    val source: String? = null
 )
-
-interface OAuth2User {
-    fun project(): UserProjection
-}

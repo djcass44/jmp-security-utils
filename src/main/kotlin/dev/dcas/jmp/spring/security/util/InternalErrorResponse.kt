@@ -6,8 +6,7 @@
 
 package dev.dcas.jmp.spring.security.util
 
-object Responses {
-    const val NOT_FOUND_USER = "That user could not be found."
-    const val NOT_FOUND_PROVIDER = "That provider could not be found."
-    const val NOT_FOUND_SESSION = "That session could not be found."
-}
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
+
+class InternalErrorResponse(message: String = "Internal server error."): ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, message)
