@@ -4,7 +4,7 @@
  *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package dev.dcas.jmp.spring.security
+package dev.dcas.jmp.spring.security.service
 
 import dev.castive.log2.loge
 import dev.dcas.jmp.spring.security.model.UserPrincipal
