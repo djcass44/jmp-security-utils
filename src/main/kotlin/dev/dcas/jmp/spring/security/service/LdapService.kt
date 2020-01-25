@@ -13,7 +13,7 @@ import dev.dcas.jmp.spring.security.model.BasicAuth
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
-import dev.dcas.jmp.spring.security.util.ConflictResponse
+import dev.dcas.util.spring.responses.ConflictResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.ldap.core.AttributesMapper

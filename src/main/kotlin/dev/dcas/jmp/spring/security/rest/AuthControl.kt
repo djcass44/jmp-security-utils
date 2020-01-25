@@ -15,11 +15,11 @@ import dev.dcas.jmp.spring.security.model.BasicAuth
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
 import dev.dcas.jmp.spring.security.service.JwtService
 import dev.dcas.jmp.spring.security.service.LdapService
-import dev.dcas.jmp.spring.security.util.BadRequestResponse
-import dev.dcas.jmp.spring.security.util.NotFoundResponse
 import dev.dcas.jmp.spring.security.util.Responses
-import dev.dcas.jmp.spring.security.util.UnauthorizedResponse
 import dev.dcas.util.extend.isESNullOrBlank
+import dev.dcas.util.spring.responses.BadRequestResponse
+import dev.dcas.util.spring.responses.NotFoundResponse
+import dev.dcas.util.spring.responses.UnauthorizedResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

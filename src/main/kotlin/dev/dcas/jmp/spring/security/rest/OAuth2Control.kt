@@ -13,9 +13,9 @@ import dev.castive.log2.logw
 import dev.dcas.jmp.spring.security.model.AuthToken
 import dev.dcas.jmp.spring.security.oauth2.OAuth2TokenProvider
 import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
-import dev.dcas.jmp.spring.security.util.BadRequestResponse
-import dev.dcas.jmp.spring.security.util.InternalErrorResponse
 import dev.dcas.util.extend.ellipsize
+import dev.dcas.util.spring.responses.BadRequestResponse
+import dev.dcas.util.spring.responses.InternalErrorResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize

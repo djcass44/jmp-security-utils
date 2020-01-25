@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "dev.dcas.jmp"
-version = "1.0-SNAPSHOT"
+version = "0.1-SNAPSHOT"
 
 java.apply {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -43,7 +43,9 @@ dependencies {
     // misc
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
     implementation("com.github.djcass44:log2:4.1")
-    implementation("com.github.djcass44:castive-utilities:v4.1")
+    implementation("com.github.djcass44:castive-utilities:v5.RC3") {
+        exclude("org.springframework.boot", "spring-boot-starter-data-jpa")
+    }
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("com.github.scribejava:scribejava-apis:6.8.1")
 

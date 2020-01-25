@@ -19,10 +19,10 @@ import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
 import dev.dcas.jmp.spring.security.oauth2.impl.GitHubProvider
 import dev.dcas.jmp.spring.security.oauth2.impl.GoogleProvider
 import dev.dcas.jmp.spring.security.props.SecurityProps
-import dev.dcas.jmp.spring.security.util.NotFoundResponse
 import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.util.cache.TimedCache
 import dev.dcas.util.extend.ellipsize
+import dev.dcas.util.spring.responses.NotFoundResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -65,11 +65,11 @@ class OAuth2TokenProvider @Autowired constructor(
         }
         "Activated ${providers.size} oauth2 provider(s): [${providers.joinToString(", ") { it.name }}]".logi(javaClass)
         providers.forEach {
-            groupRepo.findFirstByName("_oauth2/${it.name}") ?: groupRepo.create(
+            groupRepo.findFirstByName("_${SecurityConstants.sourceOAuth2}/${it.name}") ?: groupRepo.create(
                 // create the group if it doesn't exist
-                name = "_oauth2/${it.name}",
+                name = "_${SecurityConstants.sourceOAuth2}/${it.name}",
                 source = it.name,
-                defaultFor = "oauth2/${it.name}"
+                defaultFor = "${SecurityConstants.sourceOAuth2}/${it.name}"
             )
         }
         "Finished oauth2 group checks".logv(javaClass)
@@ -86,14 +86,15 @@ class OAuth2TokenProvider @Autowired constructor(
             return false
         }
         counter++
+	    // peek the cache every now and then
         if(counter > 25) {
             "Token cache contains ${tokenCache.size()} elements".logd(javaClass)
             counter = 0
         }
-
         val cached = tokenCache[token]
-        if(cached != null)
+        if(cached != null) // if the token is cached, consider it valid
             return true
+	    // otherwise check the provider themselves
         if(provider.isTokenValid(token)) {
             tokenCache[token] = token
             return true
@@ -108,7 +109,7 @@ class OAuth2TokenProvider @Autowired constructor(
             return false
         }
         // users are prepended with oauth2 to ensure there are no collisions
-        val oauthUsername = "oauth2/${userData.username}"
+        val oauthUsername = "${SecurityConstants.sourceOAuth2}/${userData.username}"
         // only create the user if they don't exist
         if(!userRepo.existsByUsername(oauthUsername)) {
             // create the user

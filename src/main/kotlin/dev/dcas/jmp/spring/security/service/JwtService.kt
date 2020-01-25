@@ -13,7 +13,7 @@ import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
-import dev.dcas.jmp.spring.security.util.NotFoundResponse
+import dev.dcas.util.spring.responses.NotFoundResponse
 import dev.dcas.jmp.spring.security.util.Responses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder

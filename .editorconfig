@@ -1,0 +1,6 @@
+root = true
+
+[*.{kt,kts,java}]
+tab_width = 4
+indent_size = tab
+indent_style = tab

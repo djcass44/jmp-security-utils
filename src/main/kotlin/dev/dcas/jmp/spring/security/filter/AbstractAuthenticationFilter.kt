@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
+
     fun filter(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -48,5 +49,6 @@ abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
         // continue with the request
         filterChain.doFilter(request, response)
     }
+
     abstract fun isRelevantRequest(source: String?): Boolean
 }

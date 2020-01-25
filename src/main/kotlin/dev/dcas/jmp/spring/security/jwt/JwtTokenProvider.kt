@@ -34,10 +34,10 @@ class JwtTokenProvider @Autowired constructor(
     private fun createToken(username: String, roles: List<GrantedAuthority>, limit: Long): String {
         val claims = Jwts.claims()
             .setSubject(username)
-        claims["auth"] = roles.mapNotNull {
-            SimpleGrantedAuthority(it.authority)
-        }
-        val now = Date()
+	    claims["auth"] = roles.map {
+	        SimpleGrantedAuthority(it.authority)
+	    }
+	    val now = Date()
         val exp = Date(now.time + limit)
 
         return Jwts.builder()
