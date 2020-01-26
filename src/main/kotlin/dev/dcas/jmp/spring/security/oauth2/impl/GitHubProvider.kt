@@ -7,6 +7,8 @@
 package dev.dcas.jmp.spring.security.oauth2.impl
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.scribejava.apis.GitHubApi
 import com.github.scribejava.core.model.OAuthRequest
 import com.github.scribejava.core.model.Verb
@@ -15,10 +17,12 @@ import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.model.OAuth2User
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
-import dev.dcas.util.extend.parse
 import dev.dcas.util.extend.toBasic
 
-class GitHubProvider(private val config: ProviderConfig): AbstractOAuth2Provider(config, GitHubApi.instance()) {
+class GitHubProvider(
+	private val config: ProviderConfig,
+	private val objectMapper: ObjectMapper
+): AbstractOAuth2Provider(config, GitHubApi.instance()) {
 
     data class GitHubUser(
         val login: String,
@@ -54,7 +58,7 @@ class GitHubProvider(private val config: ProviderConfig): AbstractOAuth2Provider
             return null
         }
         return kotlin.runCatching {
-            response.body.parse(GitHubUser::class.java).project()
+	        objectMapper.readValue<GitHubUser>(response.body).project()
         }.onFailure {
             "Failed to parse response body".loge(javaClass, it)
         }.getOrNull()

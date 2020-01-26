@@ -16,5 +16,5 @@ import dev.dcas.jmp.spring.security.model.entity.GroupEntity
 
 interface GroupRepository {
     fun findFirstByName(name: String): GroupEntity?
-    fun create(name: String, source: String, defaultFor: String)
+    fun create(name: String, source: String, defaultFor: String?)
 }

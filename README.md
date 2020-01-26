@@ -1,15 +1,24 @@
 # JMP Security Utils
 
-This project contains a number of utilities used by [JMP](https://github.com/djcass44/jmp)
+This project contains a number of security utilities used by [JMP](https://github.com/djcass44/jmp).
 Please be aware that these utilities are made for a specific purpose and may not meet your needs.
 They are also in active development so production use is not recommended.
 
-It provides the following:
+This library provides the following:
 
 * Config-based CORS toggling
 * Disables CSRF
 * *(optional)* OAuth2-based authentication
-* *(optional)* Jwt-based authentication (database +/ ldap)
+* *(optional)* Jwt-based authentication (database and/or ldap)
+
+## Integration
+
+In order to use this library you will need to extend the following classes:
+* `dev.dcas.jmp.spring.security.model.repo.UserRepository`
+* `dev.dcas.jmp.spring.security.model.repo.GroupRepository`
+* `dev.dcas.jmp.spring.security.model.repo.SessionRepository`
+
+Examples of this can be seen in the NoOp implementations provided by this library.
 
 ## OAuth2
 
@@ -41,8 +50,8 @@ fun main(args: Array<String>) {
 
 ## LDAP
 
-LDAP requires the `@EnableJwt` annotation as it piggy-backs of its Jwt generation.
-LDAP support is enabled via the following spring config:
+LDAP requires the `@EnableJwt` annotation as it piggy-backs off its Jwt generation.
+LDAP support is enabled via one of the following spring config:
 
 * `SPRING_LDAP_ENABLED=true`
 * ```yaml

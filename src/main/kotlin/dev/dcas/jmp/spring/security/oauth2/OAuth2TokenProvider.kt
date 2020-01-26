@@ -58,7 +58,7 @@ class OAuth2TokenProvider @Autowired constructor(
         // build our providers
         oauth2Config.oauth2.filter { it.enabled }.forEach {
             when(it.name) {
-                "github" -> providers.add(GitHubProvider(it))
+                "github" -> providers.add(GitHubProvider(it, objectMapper))
                 "google" -> providers.add(GoogleProvider(it, objectMapper))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
@@ -121,7 +121,7 @@ class OAuth2TokenProvider @Autowired constructor(
             "User already exists: $oauthUsername".logi(javaClass)
             // create/update the session for the existing user
             val user = userRepo.findFirstByUsername(oauthUsername)?.let {
-                userRepo.update(userData)
+                userRepo.update(oauthUsername, userData)
             }
             newSession(accessToken, refreshToken, user)
         }

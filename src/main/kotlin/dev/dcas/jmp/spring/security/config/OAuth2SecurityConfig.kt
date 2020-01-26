@@ -11,12 +11,11 @@ import dev.dcas.jmp.spring.security.oauth2.OAuth2TokenProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 
 @Configuration
 class OAuth2SecurityConfig @Autowired constructor(
     private val oauth2Provider: OAuth2TokenProvider
-): WebSecurityConfigurerAdapter() {
+): SecurityConfigurerAdapter {
 
     override fun configure(http: HttpSecurity) {
         // apply oauth2 filter

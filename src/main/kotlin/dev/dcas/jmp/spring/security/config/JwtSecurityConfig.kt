@@ -11,12 +11,11 @@ import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 
 @Configuration
 class JwtSecurityConfig @Autowired constructor(
     private val jwtProvider: JwtTokenProvider
-): WebSecurityConfigurerAdapter() {
+): SecurityConfigurerAdapter {
 
     override fun configure(http: HttpSecurity) {
         // apply jwt filter

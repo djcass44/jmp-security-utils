@@ -13,8 +13,10 @@
 package dev.dcas.jmp.spring.security.model.entity
 
 import org.springframework.security.core.GrantedAuthority
+import java.util.*
 
 interface UserEntity {
+	val id: UUID
     val username: String
     val source: String
     val hash: String?

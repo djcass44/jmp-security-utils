@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnMissingBean(name = ["userRepository"])
+@ConditionalOnMissingBean(UserRepository::class)
 class NoOpUserRepositoryImpl: UserRepository {
     override fun findFirstByUsername(username: String): UserEntity? = null
 
@@ -14,7 +14,7 @@ class NoOpUserRepositoryImpl: UserRepository {
 
     override fun existsByUsername(username: String): Boolean = false
 
-    override fun update(data: UserProjection): UserEntity {
+    override fun update(username: String, data: UserProjection): UserEntity {
         throw NotImplementedError("This is a no-op bean")
     }
 

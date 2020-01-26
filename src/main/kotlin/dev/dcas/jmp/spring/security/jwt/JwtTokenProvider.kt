@@ -9,7 +9,7 @@ package dev.dcas.jmp.spring.security.jwt
 import dev.castive.log2.loge
 import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.model.TokenProvider
-import dev.dcas.jmp.spring.security.props.JwtProps
+import dev.dcas.jmp.spring.security.props.SecurityProps
 import dev.dcas.jmp.spring.security.service.UserDetailsService
 import dev.dcas.util.extend.ellipsize
 import io.jsonwebtoken.Jwts
@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider @Autowired constructor(
-    private val jwtProps: JwtProps,
+    private val securityProps: SecurityProps,
     private val userDetailsService: UserDetailsService
 ): TokenProvider {
-    fun createRequestToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, jwtProps.requestLimit)
-    fun createRefreshToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, jwtProps.refreshLimit)
+    fun createRequestToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, securityProps.jwt.requestLimit)
+    fun createRefreshToken(username: String, roles: List<GrantedAuthority>): String = createToken(username, roles, securityProps.jwt.refreshLimit)
 
     private fun createToken(username: String, roles: List<GrantedAuthority>, limit: Long): String {
         val claims = Jwts.claims()
@@ -44,7 +44,7 @@ class JwtTokenProvider @Autowired constructor(
             .setClaims(claims)
             .setIssuedAt(now)
             .setExpiration(exp)
-            .signWith(SignatureAlgorithm.HS256, jwtProps.secretKey)
+            .signWith(SignatureAlgorithm.HS256, securityProps.jwt.secretKey)
             .compact()
     }
 
@@ -54,7 +54,7 @@ class JwtTokenProvider @Autowired constructor(
     }
 
     fun getUsername(token: String): String? = kotlin.runCatching {
-        Jwts.parser().setSigningKey(jwtProps.secretKey).parseClaimsJws(token).body.subject
+        Jwts.parser().setSigningKey(securityProps.jwt.secretKey).parseClaimsJws(token).body.subject
     }.onFailure {
         "Encountered expired or invalid Jwt token: ${token.ellipsize(24)}".loge(javaClass, it)
     }.getOrNull()
@@ -68,8 +68,8 @@ class JwtTokenProvider @Autowired constructor(
 
     override fun isTokenValid(token: String, source: String): Boolean = kotlin.runCatching {
         Jwts.parser()
-            .setSigningKey(jwtProps.secretKey)
-            .setAllowedClockSkewSeconds(jwtProps.leeway / 1000)
+            .setSigningKey(securityProps.jwt.secretKey)
+            .setAllowedClockSkewSeconds(securityProps.jwt.leeway / 1000)
             .parseClaimsJws(token)
         true
     }.onFailure {

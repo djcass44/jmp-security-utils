@@ -6,14 +6,10 @@
 
 package dev.dcas.jmp.spring.security.props
 
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
-import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
-@Component
 @ConstructorBinding
-@ConfigurationProperties(prefix = "security.jwt")
 data class JwtProps(
     val secretKey: String,
     val requestLimit: Long = TimeUnit.HOURS.toMillis(1),

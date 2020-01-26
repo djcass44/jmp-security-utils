@@ -18,5 +18,5 @@ class JwtFilter(private val provider: JwtTokenProvider): AbstractAuthenticationF
         super.filter(request, response, filterChain, provider)
     }
 
-    override fun isRelevantRequest(source: String?): Boolean = source != null && !(source.startsWith(SecurityConstants.sourceLdap) || source.startsWith(SecurityConstants.sourceLocal))
+    override fun isRelevantRequest(source: String?): Boolean = source != null && (source.startsWith(SecurityConstants.sourceLdap) || source.startsWith(SecurityConstants.sourceLocal))
 }

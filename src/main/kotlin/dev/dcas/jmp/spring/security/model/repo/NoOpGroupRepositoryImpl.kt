@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnMissingBean(name = ["groupRepository"])
+@ConditionalOnMissingBean(GroupRepository::class)
 class NoOpGroupRepositoryImpl: GroupRepository {
     override fun findFirstByName(name: String): GroupEntity? = null
 
-    override fun create(name: String, source: String, defaultFor: String) {
+    override fun create(name: String, source: String, defaultFor: String?) {
         // do nothing
     }
 }

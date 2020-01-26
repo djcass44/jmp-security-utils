@@ -27,10 +27,12 @@ abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
     ) {
         val source: String? = request.getHeader(SecurityConstants.sourceHeader)
         if(!isRelevantRequest(source)) {
+	        "Skipping filter for source: $source (not relevant)".logd(javaClass)
             // this is not for us to mess with
             filterChain.doFilter(request, response)
             return
         }
+	    "Accepting filter for source: $source".logd(javaClass)
         val token = provider.resolveToken(request)
         if(token != null && provider.isTokenValid(token, source!!)) {
             val auth = provider.getAuthentication(token)
@@ -38,8 +40,10 @@ abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
                 "Located user principal: ${auth.name} with roles: ${auth.authorities.size}".logv(javaClass)
                 SecurityContextHolder.getContext().authentication = auth
             }
-            else
-                SecurityContextHolder.clearContext()
+            else {
+	            "Failed to locate authentication for valid token: $source".logv(javaClass)
+	            SecurityContextHolder.clearContext()
+            }
         }
         else {
             "Failed to parse token: ${token?.ellipsize(24)}".logd(javaClass)

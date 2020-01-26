@@ -13,6 +13,7 @@ plugins {
     kotlin("jvm") version "1.3.61"
     kotlin("plugin.spring") version "1.3.61"
     kotlin("kapt") version "1.3.61"
+	maven
 }
 
 group = "dev.dcas.jmp"

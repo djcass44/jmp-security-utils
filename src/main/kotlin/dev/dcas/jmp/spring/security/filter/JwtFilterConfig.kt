@@ -10,11 +10,12 @@ import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 class JwtFilterConfig(private val provider: JwtTokenProvider):
     SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(builder: HttpSecurity) {
-        builder.addFilter(JwtFilter(provider))
+        builder.addFilterBefore(JwtFilter(provider), UsernamePasswordAuthenticationFilter::class.java)
     }
 }

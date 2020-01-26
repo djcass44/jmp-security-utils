@@ -7,11 +7,14 @@
 package dev.dcas.jmp.spring.security.config
 
 import dev.castive.log2.loga
+import dev.castive.log2.logi
+import dev.castive.log2.logv
 import dev.dcas.jmp.spring.security.props.SecurityProps
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -23,12 +26,19 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 class WebSecurityConfig @Autowired constructor(
     private val securityProps: SecurityProps
 ): WebSecurityConfigurerAdapter() {
+
+	@Autowired(required = false)
+	private var jwtConfig: JwtSecurityConfig? = null
+
+	@Autowired(required = false)
+	private var oauth2Config: OAuth2SecurityConfig? = null
 
     override fun configure(http: HttpSecurity) {
         // disable CSRF
@@ -45,6 +55,15 @@ class WebSecurityConfig @Autowired constructor(
 
         // entrypoints
         http.authorizeRequests().anyRequest().permitAll()
+	    jwtConfig?.let {
+		    "Enabling JWT web security filter".logv(javaClass)
+		    it.configure(http)
+	    }
+	    oauth2Config?.let {
+		    "Enabling OAuth2 web security filter".logv(javaClass)
+		    it.configure(http)
+	    }
+	    "JMP security configuration is now in place (SESSIONS=false,CSRF=false,CORS=${securityProps.allowCors})".logi(javaClass)
     }
 
     override fun configure(web: WebSecurity) {
@@ -59,7 +78,6 @@ class WebSecurityConfig @Autowired constructor(
         )
     }
 
-    @ConditionalOnMissingBean(CorsConfigurationSource::class)
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         return UrlBasedCorsConfigurationSource().apply {

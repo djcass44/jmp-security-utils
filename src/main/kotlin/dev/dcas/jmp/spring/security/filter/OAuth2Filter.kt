@@ -21,5 +21,5 @@ class OAuth2Filter(private val oauth2TokenProvider: OAuth2TokenProvider): Abstra
         super.filter(request, response, filterChain, oauth2TokenProvider)
     }
 
-    override fun isRelevantRequest(source: String?): Boolean = source != null && !source.startsWith(SecurityConstants.sourceOAuth2)
+    override fun isRelevantRequest(source: String?): Boolean = source != null && source.startsWith(SecurityConstants.sourceOAuth2)
 }

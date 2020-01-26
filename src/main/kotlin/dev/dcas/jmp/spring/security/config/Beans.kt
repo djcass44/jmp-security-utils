@@ -6,17 +6,24 @@
 
 package dev.dcas.jmp.spring.security.config
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
-@ConditionalOnMissingBean(PasswordEncoder::class)
-@Bean
-fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+@Configuration
+class Beans {
+	@ConditionalOnMissingBean(PasswordEncoder::class)
+	@Bean
+	fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
-@ConditionalOnMissingBean(ObjectMapper::class)
-@Bean
-fun objectMapper(): ObjectMapper = jacksonObjectMapper()
+	@ConditionalOnMissingBean(ObjectMapper::class)
+	@Bean
+	fun objectMapper(): ObjectMapper = jacksonObjectMapper().apply {
+		disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+	}
+}

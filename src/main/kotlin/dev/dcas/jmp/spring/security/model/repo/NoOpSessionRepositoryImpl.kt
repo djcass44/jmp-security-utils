@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnMissingBean(name = ["sessionRepository"])
+@ConditionalOnMissingBean(SessionRepository::class)
 class NoOpSessionRepositoryImpl: SessionRepository {
 	override fun findFirstByRefreshTokenAndActiveTrue(token: String): SessionEntity? = null
 

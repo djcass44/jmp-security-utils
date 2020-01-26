@@ -10,11 +10,12 @@ import dev.dcas.jmp.spring.security.oauth2.OAuth2TokenProvider
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 class OAuth2FilterConfig(private val provider: OAuth2TokenProvider):
     SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(builder: HttpSecurity) {
-        builder.addFilter(OAuth2Filter(provider))
+        builder.addFilterBefore(OAuth2Filter(provider), UsernamePasswordAuthenticationFilter::class.java)
     }
 }
