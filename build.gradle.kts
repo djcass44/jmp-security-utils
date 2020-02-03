@@ -50,6 +50,7 @@ subprojects {
 	apply(plugin = "org.springframework.boot")
 	apply(plugin = "io.spring.dependency-management")
 	apply(plugin = "org.jetbrains.kotlin.jvm")
+	apply(plugin = "org.jetbrains.kotlin.plugin.spring")
 	apply(plugin = "maven")
 	dependencies {
 		implementation(kotlin("stdlib-jdk8"))
@@ -59,7 +60,6 @@ subprojects {
 		implementation("org.springframework.boot:spring-boot-starter")
 		implementation("org.springframework.boot:spring-boot-starter-web")
 		implementation("org.springframework.boot:spring-boot-starter-security")
-		implementation("org.springframework.boot:spring-boot-starter-data-ldap")
 		implementation("org.springframework.boot:spring-boot-configuration-processor")
 
 		// misc
