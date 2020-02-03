@@ -13,7 +13,6 @@ plugins {
     kotlin("jvm") version "1.3.61"
     kotlin("plugin.spring") version "1.3.61"
     kotlin("kapt") version "1.3.61"
-	maven
 }
 
 group = "dev.dcas.jmp.security"
@@ -24,19 +23,16 @@ dependencies {
 	kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
 
-tasks {
-	wrapper {
-		gradleVersion = "6.1"
-		distributionType = Wrapper.DistributionType.ALL
-	}
-}
-
 allprojects {
 	repositories {
 		mavenCentral()
 		maven(url = "https://jitpack.io")
 	}
 	tasks {
+		withType<Wrapper> {
+			gradleVersion = "6.1"
+			distributionType = Wrapper.DistributionType.ALL
+		}
 		withType<KotlinCompile>().all {
 			kotlinOptions {
 				freeCompilerArgs = listOf("-Xjsr305=strict")
