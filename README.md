@@ -14,9 +14,9 @@ This library provides the following:
 ## Integration
 
 In order to use this library you will need to extend the following classes:
-* `dev.dcas.jmp.spring.security.model.repo.UserRepository`
-* `dev.dcas.jmp.spring.security.model.repo.GroupRepository`
-* `dev.dcas.jmp.spring.security.model.repo.SessionRepository`
+* `UserRepository`
+* `GroupRepository`
+* `SessionRepository`
 
 Examples of this can be seen in the NoOp implementations provided by this library.
 
