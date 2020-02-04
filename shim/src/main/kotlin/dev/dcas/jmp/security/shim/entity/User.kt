@@ -7,6 +7,7 @@
 package dev.dcas.jmp.security.shim.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import dev.castive.jmp.entity.Role
 import dev.castive.log2.logv
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.util.spring.data.UUIDConverterCompat

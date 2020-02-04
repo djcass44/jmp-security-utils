@@ -1,7 +1,7 @@
 package dev.dcas.jmp.security.shim.impl
 
+import dev.castive.jmp.entity.Role
 import dev.dcas.jmp.security.shim.entity.Meta
-import dev.dcas.jmp.security.shim.entity.Role
 import dev.dcas.jmp.security.shim.entity.User
 import dev.dcas.jmp.security.shim.repo.MetaRepo
 import dev.dcas.jmp.security.shim.repo.UserRepo
