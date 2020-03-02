@@ -23,7 +23,7 @@ data class Group(
 	var public: Boolean = false,
 	var defaultFor: String? = null,
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	val users: MutableSet<User> = mutableSetOf()
 ): GroupEntity {
 	fun containsUser(user: User): Boolean = users.any {
