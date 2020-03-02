@@ -6,6 +6,7 @@
 
 package dev.dcas.jmp.spring.security.oauth2.impl
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.scribejava.apis.KeycloakApi
@@ -24,17 +25,23 @@ class KeycloakProvider(
 ): AbstractOAuth2Provider(config, KeycloakApi.instance(config.apiUrl, config.scope)) {
 
     data class KeycloakUser(
-        val username: String,
-        val picture: String,
-		// this may be "given_name"
-        val firstName: String,
-		val lastName: String
+		val sub: String,
+		@JsonProperty("email_verified")
+		val emailVerified: Boolean,
+		val name: String,
+		@JsonProperty("preferred_username")
+		val preferredUsername: String,
+		@JsonProperty("given_name")
+		val givenName: String,
+		@JsonProperty("family_name")
+		val familyName: String,
+		val email: String
     ): OAuth2User {
         /**
          * Creates a common interface for oauth2 user information
          */
         override fun project(): UserProjection {
-            return UserProjection(username, "$firstName $lastName", picture, "keycloak")
+            return UserProjection(preferredUsername, name, null, "keycloak")
         }
     }
 
