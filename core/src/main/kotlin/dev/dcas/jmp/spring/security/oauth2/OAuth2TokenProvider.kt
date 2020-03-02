@@ -18,6 +18,7 @@ import dev.dcas.jmp.spring.security.model.repo.UserRepository
 import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
 import dev.dcas.jmp.spring.security.oauth2.impl.GitHubProvider
 import dev.dcas.jmp.spring.security.oauth2.impl.GoogleProvider
+import dev.dcas.jmp.spring.security.oauth2.impl.KeycloakProvider
 import dev.dcas.jmp.spring.security.props.SecurityProps
 import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.util.cache.TimedCache
@@ -60,6 +61,7 @@ class OAuth2TokenProvider @Autowired constructor(
             when(it.name) {
                 "github" -> providers.add(GitHubProvider(it, objectMapper))
                 "google" -> providers.add(GoogleProvider(it, objectMapper))
+				"keycloak" -> providers.add(KeycloakProvider(it, objectMapper))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
         }
