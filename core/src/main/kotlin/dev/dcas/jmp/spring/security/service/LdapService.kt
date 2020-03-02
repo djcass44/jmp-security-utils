@@ -13,6 +13,7 @@ import dev.dcas.jmp.spring.security.model.BasicAuth
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
+import dev.dcas.jmp.spring.security.util.Events
 import dev.dcas.util.spring.responses.ConflictResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -126,7 +127,10 @@ class LdapService @Autowired constructor(
             }
             // otherwise, create a new user
             "Creating new user representation for LDAP user: $username".logi(javaClass)
-            return userRepo.createWithData(SecurityConstants.sourceLdap, username, UserProjection(username, attr.get("cn").get() as String, null, SecurityConstants.sourceLdap))
+            val user = userRepo.createWithData(SecurityConstants.sourceLdap, username, UserProjection(username, attr.get("cn").get() as String, null, SecurityConstants.sourceLdap))
+			// fire an event for listeners
+			Events.eventEmitter.onUserCreated(SecurityConstants.sourceLdap, user.username)
+			return user
         }
     }
 }

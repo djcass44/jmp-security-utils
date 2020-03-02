@@ -18,7 +18,9 @@ import dev.dcas.jmp.spring.security.model.repo.UserRepository
 import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
 import dev.dcas.jmp.spring.security.oauth2.impl.GitHubProvider
 import dev.dcas.jmp.spring.security.oauth2.impl.GoogleProvider
+import dev.dcas.jmp.spring.security.oauth2.impl.KeycloakProvider
 import dev.dcas.jmp.spring.security.props.SecurityProps
+import dev.dcas.jmp.spring.security.util.Events
 import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.util.cache.TimedCache
 import dev.dcas.util.extend.ellipsize
@@ -60,6 +62,7 @@ class OAuth2TokenProvider @Autowired constructor(
             when(it.name) {
                 "github" -> providers.add(GitHubProvider(it, objectMapper))
                 "google" -> providers.add(GoogleProvider(it, objectMapper))
+				"keycloak" -> providers.add(KeycloakProvider(it, objectMapper))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
         }
@@ -112,8 +115,11 @@ class OAuth2TokenProvider @Autowired constructor(
         val oauthUsername = "${SecurityConstants.sourceOAuth2}/${userData.username}"
         // only create the user if they don't exist
         if(!userRepo.existsByUsername(oauthUsername)) {
+			"Creating user: $oauthUsername".logi(javaClass)
             // create the user
             val user = userRepo.createWithData("${SecurityConstants.sourceOAuth2}/${provider.name}", oauthUsername, userData)
+			// fire an event for listeners
+			Events.eventEmitter.onUserCreated("${SecurityConstants.sourceOAuth2}/${provider.name}", user.username)
             // create a session for the new user
             newSession(accessToken, refreshToken, user)
         }
