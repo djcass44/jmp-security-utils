@@ -57,7 +57,7 @@ class GoogleProvider(
 
     override fun getUserInformation(accessToken: String): UserProjection? {
 		return kotlin.runCatching {
-			client.getUser(accessToken)
+			client.getUser("Bearer $accessToken")
 		}.onFailure {
 			"Failed to lookup user".loge(javaClass, it)
 		}.getOrNull()?.project()
