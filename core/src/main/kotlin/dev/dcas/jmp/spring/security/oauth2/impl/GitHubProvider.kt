@@ -40,7 +40,7 @@ class GitHubProvider(
     }
 
     override fun isTokenValid(accessToken: String): Boolean {
-		val response = client.isTokenValid(GitHubApiClient.GitHub3Authentication(accessToken), (config.clientId to config.clientSecret).toBasic(), config.clientId)
+		val response = client.isTokenValid(GitHubApiClient.GitHub3Authentication("Bearer $accessToken"), (config.clientId to config.clientSecret).toBasic(), config.clientId)
         return response.status() == HttpStatus.OK.value()
     }
 

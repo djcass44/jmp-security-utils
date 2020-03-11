@@ -41,7 +41,7 @@ class GoogleProvider(
     }
 
     override fun isTokenValid(accessToken: String): Boolean {
-		val response = client.isTokenValid(accessToken)
+		val response = client.isTokenValid("Bearer $accessToken")
         // if the request failed, return false
         if(response.statusCode != HttpStatus.OK) {
             "Got unsuccessful response from Google's /v1/tokeninfo".logd(javaClass)

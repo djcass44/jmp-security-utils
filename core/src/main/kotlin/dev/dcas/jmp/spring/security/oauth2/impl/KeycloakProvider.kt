@@ -51,7 +51,7 @@ class KeycloakProvider(
 
     override fun getUserInformation(accessToken: String): UserProjection? {
 		return kotlin.runCatching {
-			client.getUser(URI.create(config.apiUrl), accessToken, config.scope)
+			client.getUser(URI.create(config.apiUrl), "Bearer $accessToken", config.scope)
 		}.onFailure {
 			"Failed to lookup user".loge(javaClass, it)
 		}.getOrNull()?.project()
