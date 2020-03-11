@@ -6,24 +6,23 @@
 
 package dev.dcas.jmp.spring.security.oauth2.impl
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.scribejava.apis.KeycloakApi
-import com.github.scribejava.core.model.OAuthRequest
-import com.github.scribejava.core.model.Verb
 import dev.castive.log2.loge
-import dev.dcas.jmp.spring.security.SecurityConstants
+import dev.dcas.jmp.spring.security.client.KeycloakApiClient
 import dev.dcas.jmp.spring.security.model.OAuth2User
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
+import java.net.URI
 
 class KeycloakProvider(
 	private val config: ProviderConfig,
-	private val objectMapper: ObjectMapper
+	private val client: KeycloakApiClient
 	// reuse scope as realm
 ): AbstractOAuth2Provider(config, KeycloakApi.instance(config.apiUrl, config.scope)) {
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
     data class KeycloakUser(
 		val sub: String,
 		@JsonProperty("email_verified")
@@ -51,18 +50,10 @@ class KeycloakProvider(
     override fun isTokenValid(accessToken: String): Boolean = true
 
     override fun getUserInformation(accessToken: String): UserProjection? {
-        val request = OAuthRequest(Verb.GET, "${config.apiUrl}/auth/realms/${config.scope}/protocol/openid-connect/userinfo").apply {
-            addHeader(SecurityConstants.authHeader, "Bearer $accessToken")
-        }
-        val response = service.execute(request)
-        if(!response.isSuccessful) {
-            "Failed to load user information: ${response.body}".loge(javaClass)
-            return null
-        }
-        return kotlin.runCatching {
-	        objectMapper.readValue<KeycloakUser>(response.body).project()
-        }.onFailure {
-            "Failed to parse response body".loge(javaClass, it)
-        }.getOrNull()
+		return kotlin.runCatching {
+			client.getUser(URI.create(config.apiUrl), accessToken, config.scope)
+		}.onFailure {
+			"Failed to lookup user".loge(javaClass, it)
+		}.getOrNull()?.project()
     }
 }

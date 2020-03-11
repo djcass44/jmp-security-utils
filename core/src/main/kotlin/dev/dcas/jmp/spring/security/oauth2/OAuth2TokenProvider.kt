@@ -9,6 +9,9 @@ package dev.dcas.jmp.spring.security.oauth2
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.castive.log2.*
 import dev.dcas.jmp.spring.security.SecurityConstants
+import dev.dcas.jmp.spring.security.client.GitHubApiClient
+import dev.dcas.jmp.spring.security.client.GoogleApiClient
+import dev.dcas.jmp.spring.security.client.KeycloakApiClient
 import dev.dcas.jmp.spring.security.model.TokenProvider
 import dev.dcas.jmp.spring.security.model.UserPrincipal
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
@@ -45,7 +48,10 @@ class OAuth2TokenProvider @Autowired constructor(
     @Value("\${security.token.age-limit:6}")
     private val ageLimit: Int,
     @Value("\${security.token.age-tick:10000}")
-    private val tickDelay: Long
+    private val tickDelay: Long,
+	private val githubClient: GitHubApiClient,
+	private val googleClient: GoogleApiClient,
+	private val keycloakClient: KeycloakApiClient
 ): TokenProvider {
     // hold tokens for 60 seconds (tick every 10)
     private val tokenCache = TimedCache<String, String>(ageLimit, null, tickDelay)
@@ -60,9 +66,9 @@ class OAuth2TokenProvider @Autowired constructor(
         // build our providers
         oauth2Config.oauth2.filter { it.enabled }.forEach {
             when(it.name) {
-                "github" -> providers.add(GitHubProvider(it, objectMapper))
-                "google" -> providers.add(GoogleProvider(it, objectMapper))
-				"keycloak" -> providers.add(KeycloakProvider(it, objectMapper))
+                "github" -> providers.add(GitHubProvider(it, githubClient))
+                "google" -> providers.add(GoogleProvider(it, googleClient, objectMapper))
+				"keycloak" -> providers.add(KeycloakProvider(it, keycloakClient))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
         }

@@ -13,6 +13,7 @@ import dev.dcas.jmp.security.shim.impl.UserRepository
 import dev.dcas.jmp.security.shim.repo.SessionRepoCustomImpl
 import org.springframework.context.annotation.Import
 
+@Deprecated("Replaced by AutoConfiguration")
 @Import(
 	ShimConfigRef::class,
 	GroupRepository::class,

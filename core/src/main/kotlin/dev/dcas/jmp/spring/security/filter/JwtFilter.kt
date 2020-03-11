@@ -8,12 +8,15 @@ package dev.dcas.jmp.spring.security.filter
 
 import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 class JwtFilter(private val provider: JwtTokenProvider): AbstractAuthenticationFilter() {
     override fun doFilterInternal(
-        request: javax.servlet.http.HttpServletRequest,
-        response: javax.servlet.http.HttpServletResponse,
-        filterChain: javax.servlet.FilterChain
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
     ) {
         super.filter(request, response, filterChain, provider)
     }
