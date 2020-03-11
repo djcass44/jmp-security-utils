@@ -31,7 +31,7 @@ abstract class AbstractOAuth2Provider(
 
     val name: String = provider.name
 
-    internal val service = ServiceBuilder(provider.clientId)
+    private val service = ServiceBuilder(provider.clientId)
         .apiSecret(provider.clientSecret)
         .callback(provider.callbackUrl)
         .defaultScope(provider.scope)

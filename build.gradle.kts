@@ -8,11 +8,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "2.2.4.RELEASE"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    kotlin("jvm") version "1.3.61"
-    kotlin("plugin.spring") version "1.3.61"
-    kotlin("kapt") version "1.3.61"
+    id("org.springframework.boot") version "2.2.5.RELEASE"
+    id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    kotlin("jvm") version "1.3.70"
+    kotlin("plugin.spring") version "1.3.70"
+    kotlin("kapt") version "1.3.70"
 }
 
 group = "dev.dcas.jmp.security"
@@ -25,12 +25,13 @@ dependencies {
 
 allprojects {
 	repositories {
+		maven(url = "https://mvn.v2.dcas.dev")
 		mavenCentral()
 		maven(url = "https://jitpack.io")
 	}
 	tasks {
 		withType<Wrapper> {
-			gradleVersion = "6.1"
+			gradleVersion = "6.2.2"
 			distributionType = Wrapper.DistributionType.ALL
 		}
 		withType<KotlinCompile>().all {
@@ -61,12 +62,12 @@ subprojects {
 		// misc
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
 		implementation("com.github.djcass44:log2:4.1")
-		implementation("com.github.djcass44:castive-utilities:v5.RC3") {
+		implementation("com.github.djcass44:castive-utilities:v6.RC2") {
 			exclude("org.springframework.boot", "spring-boot-starter-data-jpa")
 		}
 
 		// testing
-		val junitVersion = "5.6.0"
+		val junitVersion = "5.2.0"
 		testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
 		testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
 		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")

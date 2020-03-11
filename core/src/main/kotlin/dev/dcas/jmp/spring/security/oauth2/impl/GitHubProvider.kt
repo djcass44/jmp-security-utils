@@ -6,24 +6,23 @@
 
 package dev.dcas.jmp.spring.security.oauth2.impl
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.scribejava.apis.GitHubApi
-import com.github.scribejava.core.model.OAuthRequest
-import com.github.scribejava.core.model.Verb
 import dev.castive.log2.loge
-import dev.dcas.jmp.spring.security.SecurityConstants
+import dev.dcas.jmp.spring.security.client.GitHubApiClient
 import dev.dcas.jmp.spring.security.model.OAuth2User
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
 import dev.dcas.util.extend.toBasic
+import org.springframework.http.HttpStatus
 
 class GitHubProvider(
 	private val config: ProviderConfig,
-	private val objectMapper: ObjectMapper
+	private val client: GitHubApiClient
 ): AbstractOAuth2Provider(config, GitHubApi.instance()) {
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
     data class GitHubUser(
         val login: String,
         val id: Int,
@@ -41,26 +40,15 @@ class GitHubProvider(
     }
 
     override fun isTokenValid(accessToken: String): Boolean {
-        val request = OAuthRequest(Verb.GET, "${config.apiUrl}/applications/${config.clientId}/tokens/$accessToken").apply {
-            addHeader(SecurityConstants.authHeader, (config.clientId to config.clientSecret).toBasic())
-        }
-        val response = service.execute(request)
-        return response.isSuccessful
+		val response = client.isTokenValid(GitHubApiClient.GitHub3Authentication("Bearer $accessToken"), (config.clientId to config.clientSecret).toBasic(), config.clientId)
+        return response.status() == HttpStatus.OK.value()
     }
 
     override fun getUserInformation(accessToken: String): UserProjection? {
-        val request = OAuthRequest(Verb.GET, "${config.apiUrl}/user").apply {
-            addHeader(SecurityConstants.authHeader, "Bearer $accessToken")
-        }
-        val response = service.execute(request)
-        if(!response.isSuccessful) {
-            "Failed to load user information: ${response.body}".loge(javaClass)
-            return null
-        }
-        return kotlin.runCatching {
-	        objectMapper.readValue<GitHubUser>(response.body).project()
-        }.onFailure {
-            "Failed to parse response body".loge(javaClass, it)
-        }.getOrNull()
+		return kotlin.runCatching {
+			client.getUser(accessToken)
+		}.onFailure {
+			"Failed to lookup user".loge(javaClass, it)
+		}.getOrNull()?.project()
     }
 }
