@@ -11,10 +11,7 @@ import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.oauth2.impl.GitHubProvider
 import feign.Response
 import org.springframework.cloud.openfeign.FeignClient
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.*
 
 @FeignClient(value = "oauth2-github", url = "https://api.github.com")
 interface GitHubApiClient {
@@ -27,7 +24,7 @@ interface GitHubApiClient {
 	 * Check whether the users accessToken is valid
 	 * Return the full response because we only care about the status code
 	 */
-	@GetMapping("/applications/{clientId}/token")
+	@PostMapping("/applications/{clientId}/token")
 	fun isTokenValid(
 		@RequestBody body: GitHub3Authentication,
 		@RequestHeader(SecurityConstants.authHeader) accessToken: String,

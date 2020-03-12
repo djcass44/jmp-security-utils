@@ -9,6 +9,7 @@ package dev.dcas.jmp.spring.security.config
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import feign.Logger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,4 +27,8 @@ class Beans {
 	fun objectMapper(): ObjectMapper = jacksonObjectMapper().apply {
 		disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 	}
+
+	@ConditionalOnMissingBean
+	@Bean
+	fun feignLoggingLevel(): Logger.Level = Logger.Level.BASIC
 }
