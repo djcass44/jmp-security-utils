@@ -9,6 +9,7 @@ package dev.dcas.jmp.spring.security.oauth2.impl
 import com.github.scribejava.core.builder.ServiceBuilder
 import com.github.scribejava.core.builder.api.DefaultApi20
 import com.github.scribejava.core.model.OAuth2AccessToken
+import com.github.scribejava.core.oauth.OAuth20Service
 import dev.castive.log2.logv
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
@@ -31,7 +32,7 @@ abstract class AbstractOAuth2Provider(
 
     val name: String = provider.name
 
-    private val service = ServiceBuilder(provider.clientId)
+    protected val service: OAuth20Service = ServiceBuilder(provider.clientId)
         .apiSecret(provider.clientSecret)
         .callback(provider.callbackUrl)
         .defaultScope(provider.scope)
