@@ -1,0 +1,10 @@
+{
+  "sub"         : "248289761001",
+  "preferred_username": "jane.doe",
+  "name"        : "Jane Doe",
+  "given_name"  : "Jane",
+  "family_name" : "Doe",
+  "email"       : "janedoe@example.com",
+  "email_verified": true,
+  "picture"     : "http://example.com/janedoe/me.jpg"
+}

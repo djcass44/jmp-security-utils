@@ -123,7 +123,7 @@ class OAuth2TokenProvider @Autowired constructor(
             // create the user
             val user = userRepo.createWithData("${SecurityConstants.sourceOAuth2}/${provider.name}", oauthUsername, userData)
 			// fire an event for listeners
-			Events.eventEmitter.onUserCreated("${SecurityConstants.sourceOAuth2}/${provider.name}", user.username)
+			Events.emitter.emit.onUserCreated("${SecurityConstants.sourceOAuth2}/${provider.name}", user.username)
             // create a session for the new user
             newSession(accessToken, refreshToken, user)
         }

@@ -13,7 +13,11 @@ import java.util.*
  * This object is used as a centralised way of running code when certain events happen
  * E.g. when a user is created, groups need to be synced
  */
-object Events {
+class Events {
+	companion object {
+		val emitter = Events()
+	}
+
 	interface Listener {
 		fun onUserCreated(source: String, username: String? = null)
 	}
@@ -28,8 +32,15 @@ object Events {
 		"Removed event listener: ${listeners.remove(l)}".logv(javaClass)
 	}
 
+	/**
+	 * Internal utility function for resetting all listeners
+	 */
+	internal fun reset() {
+		listeners.clear()
+	}
+
 	// root emitter which fires events to all listeners
-	val eventEmitter = object : Listener {
+	val emit = object : Listener {
 		override fun onUserCreated(source: String, username: String?) {
 			"Firing event [onUserCreated] to ${listeners.size} listeners".logv(javaClass)
 			listeners.forEach {

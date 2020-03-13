@@ -129,7 +129,7 @@ class LdapService @Autowired constructor(
             "Creating new user representation for LDAP user: $username".logi(javaClass)
             val user = userRepo.createWithData(SecurityConstants.sourceLdap, username, UserProjection(username, attr.get("cn").get() as String, null, SecurityConstants.sourceLdap))
 			// fire an event for listeners
-			Events.eventEmitter.onUserCreated(SecurityConstants.sourceLdap, user.username)
+			Events.emitter.emit.onUserCreated(SecurityConstants.sourceLdap, user.username)
 			return user
         }
     }

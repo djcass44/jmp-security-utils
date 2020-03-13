@@ -1,0 +1,8 @@
+{
+  "issued_to": "xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+  "audience": "xxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+  "user_id": "xxxxxxxxxxxxxxxxxxxxxxx",
+  "scope": "https://www.googleapis.com/auth/userinfo.profile https://gdata.youtube.com",
+  "expires_in": 3340,
+  "access_type": "offline"
+}

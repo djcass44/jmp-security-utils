@@ -18,6 +18,9 @@ import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
 import dev.dcas.util.extend.parse
 
+/**
+ * https://stackoverflow.com/a/24646356 - for testing later
+ */
 class GoogleProvider(
     private val config: ProviderConfig,
     private val objectMapper: ObjectMapper
