@@ -9,28 +9,29 @@ package dev.dcas.jmp.security.shim.repo
 import dev.dcas.jmp.security.shim.entity.Session
 import dev.dcas.jmp.security.shim.entity.User
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
+import dev.dcas.jmp.spring.security.util.matches
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.security.MessageDigest
 
 @Repository
 @Transactional(readOnly = true)
 class SessionRepoCustomImpl @Autowired constructor(
 	private val sessionRepo: SessionRepo,
-	private val passwordEncoder: PasswordEncoder
+	private val sessionEncoder: MessageDigest
 ): SessionRepoCustom {
 	override fun findFirstByUserAndRefreshTokenAndActiveTrue(user: UserEntity, refreshToken: String): Session? {
 		val sessions = sessionRepo.findAllByUserAndActiveIsTrue(user as User)
 		return sessions.firstOrNull {
-			passwordEncoder.matches(refreshToken, it.refreshToken)
+			sessionEncoder.matches(refreshToken, it.refreshToken)
 		}
 	}
 
 	override fun findFirstByUserAndRequestTokenAndActiveTrue(user: UserEntity, requestToken: String): Session? {
 		val sessions = sessionRepo.findAllByUserAndActiveIsTrue(user as User)
 		return sessions.firstOrNull {
-			passwordEncoder.matches(requestToken, it.requestToken)
+			sessionEncoder.matches(requestToken, it.requestToken)
 		}
 	}
 
@@ -38,7 +39,7 @@ class SessionRepoCustomImpl @Autowired constructor(
 		val sessions = sessionRepo.findAllByActiveTrue()
 		return sessions.firstOrNull {
 			kotlin.runCatching {
-				passwordEncoder.matches(requestToken, it.requestToken)
+				sessionEncoder.matches(requestToken, it.requestToken)
 			}.getOrDefault(false)
 		}
 	}

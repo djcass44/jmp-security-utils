@@ -15,12 +15,17 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.security.MessageDigest
 
 @Configuration
 class Beans {
 	@ConditionalOnMissingBean(PasswordEncoder::class)
 	@Bean
 	fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+	@ConditionalOnMissingBean(MessageDigest::class)
+	@Bean
+	fun sessionEncoder(): MessageDigest = MessageDigest.getInstance("SHA3-384")
 
 	@ConditionalOnMissingBean(ObjectMapper::class)
 	@Bean

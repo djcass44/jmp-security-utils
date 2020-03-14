@@ -40,16 +40,11 @@ abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
                 "Located user principal: ${auth.name} with roles: ${auth.authorities.size}".logv(javaClass)
                 SecurityContextHolder.getContext().authentication = auth
             }
-            else {
+            else
 	            "Failed to locate authentication for valid token: $source".logv(javaClass)
-	            SecurityContextHolder.clearContext()
-            }
         }
-        else {
+        else
             "Failed to parse token: ${token?.ellipsize(24)}".logd(javaClass)
-            // ensure context is cleared
-            SecurityContextHolder.clearContext()
-        }
         // continue with the request
         filterChain.doFilter(request, response)
     }

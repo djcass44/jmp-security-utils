@@ -62,7 +62,7 @@ subprojects {
 		// misc
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
 		implementation("com.github.djcass44:log2:4.1")
-		implementation("com.github.djcass44:castive-utilities:v6.RC2") {
+		implementation("com.github.djcass44:castive-utilities:v6.RC3") {
 			exclude("org.springframework.boot", "spring-boot-starter-data-jpa")
 		}
 

@@ -24,6 +24,7 @@ import dev.dcas.jmp.spring.security.oauth2.impl.KeycloakProvider
 import dev.dcas.jmp.spring.security.props.SecurityProps
 import dev.dcas.jmp.spring.security.util.Events
 import dev.dcas.jmp.spring.security.util.Responses
+import dev.dcas.jmp.spring.security.util.encode
 import dev.dcas.util.cache.TimedCache
 import dev.dcas.util.extend.ellipsize
 import dev.dcas.util.spring.responses.NotFoundResponse
@@ -31,8 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.MessageDigest
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
@@ -42,7 +43,7 @@ class OAuth2TokenProvider @Autowired constructor(
     private val userRepo: UserRepository,
     private val groupRepo: GroupRepository,
     private val sessionRepo: SessionRepository,
-    private val passwordEncoder: PasswordEncoder,
+    private val sessionEncoder: MessageDigest,
     private val objectMapper: ObjectMapper,
     @Value("\${security.token.age-limit:6}")
     private val ageLimit: Int,
@@ -153,8 +154,8 @@ class OAuth2TokenProvider @Autowired constructor(
         }
         // create the new session
         sessionRepo.create(
-            passwordEncoder.encode(requestToken),
-            passwordEncoder.encode(refreshToken),
+            sessionEncoder.encode(requestToken),
+            sessionEncoder.encode(refreshToken),
             user ?: existingSession!!.user
         )
     }

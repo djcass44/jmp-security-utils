@@ -14,24 +14,25 @@ import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
 import dev.dcas.jmp.spring.security.util.Responses
+import dev.dcas.jmp.spring.security.util.encode
 import dev.dcas.util.spring.responses.NotFoundResponse
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.MessageDigest
 
 @Service
 class JwtService @Autowired constructor(
     private val userRepo: UserRepository,
     private val sessionRepo: SessionRepository,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val passwordEncoder: PasswordEncoder
+    private val sessionEncoder: MessageDigest
 ) {
     /**
      * Creates a new token and session for a specified user
      */
     fun createToken(user: UserEntity): AuthToken {
         "Generating new request token for ${user.username}".logi(javaClass)
-        val (session, request, refresh) = createSession(user, jwtTokenProvider, passwordEncoder)
+        val (session, request, refresh) = createSession(user, jwtTokenProvider)
         sessionRepo.update(session)
         return AuthToken(request, refresh, user.source)
     }
@@ -48,7 +49,7 @@ class JwtService @Autowired constructor(
         // invalidate the old session
         sessionRepo.disable(existingSession)
         // create a new session
-        val (session, request, refresh) = createSession(user, jwtTokenProvider, passwordEncoder)
+        val (session, request, refresh) = createSession(user, jwtTokenProvider)
         sessionRepo.update(session)
         "Generating new refresh token for ${user.username}".logi(javaClass)
         return AuthToken(request, refresh, user.source)
@@ -69,10 +70,10 @@ class JwtService @Autowired constructor(
     /**
      * Create a session for a user and generate tokens
      */
-    private fun createSession(user: UserEntity, provider: JwtTokenProvider, encoder: PasswordEncoder): Triple<SessionEntity, String, String> {
+    private fun createSession(user: UserEntity, provider: JwtTokenProvider): Triple<SessionEntity, String, String> {
         val request = provider.createRequestToken(user.username, user.roles)
         val refresh = provider.createRefreshToken(user.username, user.roles)
-        val session = sessionRepo.create(encoder.encode(request), encoder.encode(refresh), user)
+        val session = sessionRepo.create(sessionEncoder.encode(request), sessionEncoder.encode(refresh), user)
         return Triple(session, request, refresh)
     }
 }
