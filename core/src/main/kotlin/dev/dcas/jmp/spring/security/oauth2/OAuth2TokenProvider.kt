@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
-import java.security.MessageDigest
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
@@ -43,7 +42,6 @@ class OAuth2TokenProvider @Autowired constructor(
     private val userRepo: UserRepository,
     private val groupRepo: GroupRepository,
     private val sessionRepo: SessionRepository,
-    private val sessionEncoder: MessageDigest,
     private val objectMapper: ObjectMapper,
     @Value("\${security.token.age-limit:6}")
     private val ageLimit: Int,
@@ -152,6 +150,7 @@ class OAuth2TokenProvider @Autowired constructor(
             "Unable to create session as we have no context of the user".logw(javaClass)
             return
         }
+		val sessionEncoder = SecurityConstants.getSessionEncoder()
         // create the new session
         sessionRepo.create(
             sessionEncoder.encode(requestToken),

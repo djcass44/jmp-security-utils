@@ -7,6 +7,7 @@
 package dev.dcas.jmp.spring.security.service
 
 import dev.castive.log2.logi
+import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
 import dev.dcas.jmp.spring.security.model.AuthToken
 import dev.dcas.jmp.spring.security.model.entity.SessionEntity
@@ -18,14 +19,12 @@ import dev.dcas.jmp.spring.security.util.encode
 import dev.dcas.util.spring.responses.NotFoundResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.security.MessageDigest
 
 @Service
 class JwtService @Autowired constructor(
     private val userRepo: UserRepository,
     private val sessionRepo: SessionRepository,
-    private val jwtTokenProvider: JwtTokenProvider,
-    private val sessionEncoder: MessageDigest
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
     /**
      * Creates a new token and session for a specified user
@@ -73,6 +72,7 @@ class JwtService @Autowired constructor(
     private fun createSession(user: UserEntity, provider: JwtTokenProvider): Triple<SessionEntity, String, String> {
         val request = provider.createRequestToken(user.username, user.roles)
         val refresh = provider.createRefreshToken(user.username, user.roles)
+		val sessionEncoder = SecurityConstants.getSessionEncoder()
         val session = sessionRepo.create(sessionEncoder.encode(request), sessionEncoder.encode(refresh), user)
         return Triple(session, request, refresh)
     }
