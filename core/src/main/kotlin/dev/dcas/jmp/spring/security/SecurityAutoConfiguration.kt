@@ -6,7 +6,7 @@
 
 package dev.dcas.jmp.spring.security
 
-import dev.dcas.jmp.spring.security.config.Beans
+import dev.dcas.jmp.spring.security.config.DefaultConfig
 import dev.dcas.jmp.spring.security.config.JwtSecurityConfig
 import dev.dcas.jmp.spring.security.config.OAuth2SecurityConfig
 import dev.dcas.jmp.spring.security.config.WebSecurityConfig
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Import
 
 @Import(
 	WebSecurityConfig::class,
-	Beans::class,
+	DefaultConfig::class,
 	OAuth2Control::class,
 	AuthControl::class,
 	OAuth2SecurityConfig::class,

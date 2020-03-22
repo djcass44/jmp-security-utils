@@ -17,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class Beans {
+class DefaultConfig {
 	@ConditionalOnMissingBean(PasswordEncoder::class)
 	@Bean
 	fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
