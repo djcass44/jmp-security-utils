@@ -1,12 +1,14 @@
+import dev.dcas.gradle.boot
+
 plugins {
-	kotlin("plugin.jpa") version "1.3.70"
+	kotlin("plugin.jpa") version "1.3.71"
 }
 
 group = "dev.dcas.jmp.security"
 val projectVersion: String by project
 version = projectVersion
 
-extra["springCloudVersion"] = "Hoxton.SR2"
+extra["springCloudVersion"] = "Hoxton.SR3"
 
 dependencyManagement {
 	imports {
@@ -16,7 +18,7 @@ dependencyManagement {
 
 dependencies {
 	// spring
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation(boot("starter-data-jpa"))
 
 	implementation(project(":core"))
 }

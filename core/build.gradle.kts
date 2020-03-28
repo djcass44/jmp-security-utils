@@ -1,9 +1,12 @@
+import dev.dcas.gradle.boot
+import dev.dcas.gradle.cloud
+
 group = "dev.dcas.jmp.security"
 val projectVersion: String by project
 version = projectVersion
 
 
-extra["springCloudVersion"] = "Hoxton.SR2"
+extra["springCloudVersion"] = "Hoxton.SR3"
 
 dependencyManagement {
 	imports {
@@ -16,6 +19,6 @@ dependencies {
 	implementation("com.github.scribejava:scribejava-apis:6.9.0")
 
 	// spring
-	implementation("org.springframework.boot:spring-boot-starter-data-ldap")
-	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+	implementation(boot("starter-data-ldap"))
+	implementation(cloud("starter-openfeign"))
 }

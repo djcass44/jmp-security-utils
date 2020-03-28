@@ -4,15 +4,17 @@
  *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import dev.dcas.gradle.boot
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    kotlin("jvm") version "1.3.70"
-    kotlin("plugin.spring") version "1.3.70"
-    kotlin("kapt") version "1.3.70"
+	id("dev.dcas.gradle-util") version "0.1"
+    kotlin("jvm") version "1.3.71"
+    kotlin("plugin.spring") version "1.3.71"
+    kotlin("kapt") version "1.3.71"
 }
 
 group = "dev.dcas.jmp.security"
@@ -20,7 +22,7 @@ val projectVersion: String by project
 version = projectVersion
 
 dependencies {
-	kapt("org.springframework.boot:spring-boot-configuration-processor")
+	kapt(boot("configuration-processor"))
 }
 
 allprojects {
@@ -46,6 +48,7 @@ allprojects {
 subprojects {
 	apply(plugin = "org.springframework.boot")
 	apply(plugin = "io.spring.dependency-management")
+	apply(plugin = "dev.dcas.gradle-util")
 	apply(plugin = "org.jetbrains.kotlin.jvm")
 	apply(plugin = "org.jetbrains.kotlin.plugin.spring")
 	apply(plugin = "maven")
@@ -54,10 +57,10 @@ subprojects {
 		implementation(kotlin("reflect"))
 
 		// spring
-		implementation("org.springframework.boot:spring-boot-starter")
-		implementation("org.springframework.boot:spring-boot-starter-web")
-		implementation("org.springframework.boot:spring-boot-starter-security")
-		implementation("org.springframework.boot:spring-boot-configuration-processor")
+		implementation(boot("starter"))
+		implementation(boot("starter-web"))
+		implementation(boot("starter-security"))
+		implementation(boot("configuration-processor"))
 
 		// misc
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")

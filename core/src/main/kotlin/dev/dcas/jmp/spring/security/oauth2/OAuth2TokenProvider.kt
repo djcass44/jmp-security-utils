@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.castive.log2.*
 import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.client.GitHubApiClient
+import dev.dcas.jmp.spring.security.client.GiteaApiClient
 import dev.dcas.jmp.spring.security.client.KeycloakApiClient
 import dev.dcas.jmp.spring.security.model.TokenProvider
 import dev.dcas.jmp.spring.security.model.UserPrincipal
@@ -17,10 +18,7 @@ import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.GroupRepository
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
-import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
-import dev.dcas.jmp.spring.security.oauth2.impl.GitHubProvider
-import dev.dcas.jmp.spring.security.oauth2.impl.GoogleProvider
-import dev.dcas.jmp.spring.security.oauth2.impl.KeycloakProvider
+import dev.dcas.jmp.spring.security.oauth2.impl.*
 import dev.dcas.jmp.spring.security.props.SecurityProps
 import dev.dcas.jmp.spring.security.util.Events
 import dev.dcas.jmp.spring.security.util.Responses
@@ -48,7 +46,8 @@ class OAuth2TokenProvider @Autowired constructor(
     @Value("\${security.token.age-tick:10000}")
     private val tickDelay: Long,
 	private val githubClient: GitHubApiClient,
-	private val keycloakClient: KeycloakApiClient
+	private val keycloakClient: KeycloakApiClient,
+	private val giteaClient: GiteaApiClient
 ): TokenProvider {
     // hold tokens for 60 seconds (tick every 10)
     private val tokenCache = TimedCache<String, String>(ageLimit, null, tickDelay)
@@ -61,11 +60,17 @@ class OAuth2TokenProvider @Autowired constructor(
     fun init() {
         "Found ${oauth2Config.oauth2.size} oauth2 configurations listed".logv(javaClass)
         // build our providers
-        oauth2Config.oauth2.filter { it.enabled }.forEach {
+        oauth2Config.oauth2.filter {
+			if(!it.enabled)
+				"Encountered disabled provider: ${it.name}, skipping".logd(javaClass)
+			it.enabled
+		}.forEach {
+			"Attempting to build oauth2 configuration for provider: ${it.name}".logd(javaClass)
             when(it.name) {
                 "github" -> providers.add(GitHubProvider(it, githubClient))
                 "google" -> providers.add(GoogleProvider(it, objectMapper))
 				"keycloak" -> providers.add(KeycloakProvider(it, keycloakClient))
+				"gitea" -> providers.add(GiteaProvider(it, giteaClient, objectMapper))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
         }
