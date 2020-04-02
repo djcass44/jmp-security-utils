@@ -12,8 +12,10 @@ import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.client.GitHubApiClient
 import dev.dcas.jmp.spring.security.client.GiteaApiClient
 import dev.dcas.jmp.spring.security.client.KeycloakApiClient
+import dev.dcas.jmp.spring.security.model.AuthToken
 import dev.dcas.jmp.spring.security.model.TokenProvider
 import dev.dcas.jmp.spring.security.model.UserPrincipal
+import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.GroupRepository
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
@@ -26,16 +28,16 @@ import dev.dcas.jmp.spring.security.util.encode
 import dev.dcas.util.cache.TimedCache
 import dev.dcas.util.extend.ellipsize
 import dev.dcas.util.spring.responses.NotFoundResponse
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
+import java.security.MessageDigest
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 @Service
-class OAuth2TokenProvider @Autowired constructor(
+class OAuth2TokenProvider(
     private val oauth2Config: SecurityProps,
     private val userRepo: UserRepository,
     private val groupRepo: GroupRepository,
@@ -142,6 +144,45 @@ class OAuth2TokenProvider @Autowired constructor(
         return true
     }
 
+	/**
+	 * Use a refresh token to get a new request/refresh token
+	 */
+	fun refreshToken(refreshToken: String, source: String): AuthToken {
+		val provider = findProviderByNameOrThrow(source)
+		// disable any existing session
+		val existingSession = sessionRepo.findFirstByRefreshTokenAndActiveTrue(refreshToken) ?: throw NotFoundResponse(Responses.NOT_FOUND_SESSION)
+		sessionRepo.disable(existingSession)
+		val token = provider.refreshToken(refreshToken)
+
+		val sessionEncoder = sessionEncoder()
+		// create the new session
+		sessionRepo.create(
+			sessionEncoder?.encode(token.accessToken) ?: token.accessToken,
+			sessionEncoder?.encode(token.refreshToken) ?: token.refreshToken,
+			existingSession.user
+		)
+		return AuthToken(token.accessToken, token.refreshToken, source)
+	}
+
+	/**
+	 * Use a refresh token to get a new session
+	 * THIS IS ONLY USEFUL IF security.hashSessions == false, otherwise the tokens will be hashed
+	 */
+	fun refreshSession(refreshToken: String, source: String): SessionEntity {
+		val provider = findProviderByNameOrThrow(source)
+		// disable any existing session
+		val existingSession = sessionRepo.findFirstByRefreshTokenAndActiveTrue(refreshToken) ?: throw NotFoundResponse(Responses.NOT_FOUND_SESSION)
+		val token = provider.refreshToken(refreshToken)
+
+		val sessionEncoder = sessionEncoder()
+		// create the new session
+		return sessionRepo.create(
+			sessionEncoder?.encode(token.accessToken) ?: token.accessToken,
+			sessionEncoder?.encode(token.refreshToken) ?: token.refreshToken,
+			existingSession.user
+		)
+	}
+
     /**
      * Create and update the sessions for the user
      * @param user: what user we want to create the session for. This can be null if there is an active session (e.g. for refreshing)
@@ -155,11 +196,11 @@ class OAuth2TokenProvider @Autowired constructor(
             "Unable to create session as we have no context of the user".logw(javaClass)
             return
         }
-		val sessionEncoder = SecurityConstants.getSessionEncoder()
+		val sessionEncoder = sessionEncoder()
         // create the new session
         sessionRepo.create(
-            sessionEncoder.encode(requestToken),
-            sessionEncoder.encode(refreshToken),
+            sessionEncoder?.encode(requestToken) ?: requestToken,
+            sessionEncoder?.encode(refreshToken) ?: refreshToken,
             user ?: existingSession!!.user
         )
     }
@@ -201,4 +242,6 @@ class OAuth2TokenProvider @Autowired constructor(
     fun findProviderByName(name: String): AbstractOAuth2Provider? = providers.firstOrNull {
         it.name == name
     }
+
+	private fun sessionEncoder(): MessageDigest? = if(oauth2Config.hashSessions) SecurityConstants.getSessionEncoder() else null
 }

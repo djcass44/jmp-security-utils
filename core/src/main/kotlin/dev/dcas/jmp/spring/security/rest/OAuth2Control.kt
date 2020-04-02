@@ -16,16 +16,13 @@ import dev.dcas.jmp.spring.security.oauth2.impl.AbstractOAuth2Provider
 import dev.dcas.util.extend.ellipsize
 import dev.dcas.util.spring.responses.BadRequestResponse
 import dev.dcas.util.spring.responses.InternalErrorResponse
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/oauth2")
 @RestController
-class OAuth2Control @Autowired constructor(
-    private val oauth2TokenProvider: OAuth2TokenProvider
-) {
+class OAuth2Control(private val oauth2TokenProvider: OAuth2TokenProvider) {
 
     /**
      * Check whether a provider exists
@@ -55,6 +52,11 @@ class OAuth2Control @Autowired constructor(
             throw InternalErrorResponse()
         }
     }
+
+	@GetMapping("/refresh", produces = [MediaType.APPLICATION_JSON_VALUE])
+	fun refreshToken(@RequestParam refreshToken: String, @RequestParam source: String): AuthToken {
+		return oauth2TokenProvider.refreshToken(refreshToken, source)
+	}
 
     /**
      * Redirect the user to an oauth2 provider consent screen

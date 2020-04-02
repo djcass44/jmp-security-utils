@@ -18,7 +18,7 @@ import dev.dcas.jmp.spring.security.oauth2.ProviderConfig
 import java.net.URI
 
 class GiteaProvider(
-	private val config: ProviderConfig,
+	config: ProviderConfig,
 	private val client: GiteaApiClient,
 	objectMapper: ObjectMapper
 ): AbstractOAuth2Provider(config, GiteaApi(config.apiUrl, objectMapper)) {
@@ -45,9 +45,11 @@ class GiteaProvider(
 	private val apiUri = URI.create(config.apiUrl)
 
 	/**
-	 * Assume token is valid, if it doesn't work then it's not valid
+	 * If we can get our user-info, then we have a valid token
 	 */
-    override fun isTokenValid(accessToken: String): Boolean = true
+    override fun isTokenValid(accessToken: String): Boolean {
+		return getUserInformation(accessToken) != null
+	}
 
     override fun getUserInformation(accessToken: String): UserProjection? {
 		return kotlin.runCatching {

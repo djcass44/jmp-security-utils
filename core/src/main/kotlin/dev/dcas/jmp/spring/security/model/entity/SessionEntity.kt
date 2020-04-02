@@ -12,7 +12,7 @@
 
 package dev.dcas.jmp.spring.security.model.entity
 
-import java.util.*
+import java.util.UUID
 
 interface SessionEntity {
     val id: UUID

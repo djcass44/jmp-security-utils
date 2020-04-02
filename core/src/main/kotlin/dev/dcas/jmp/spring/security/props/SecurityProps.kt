@@ -14,4 +14,5 @@ class SecurityProps {
 	var oauth2: List<ProviderConfig> = listOf()
 	var allowCors: Boolean = false
 	var jwt: JwtProps = JwtProps("")
+	var hashSessions: Boolean = true
 }
