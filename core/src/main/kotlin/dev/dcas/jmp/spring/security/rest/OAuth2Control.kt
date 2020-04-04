@@ -55,7 +55,19 @@ class OAuth2Control(private val oauth2TokenProvider: OAuth2TokenProvider) {
 
 	@GetMapping("/refresh", produces = [MediaType.APPLICATION_JSON_VALUE])
 	fun refreshToken(@RequestParam refreshToken: String, @RequestParam source: String): AuthToken {
-		return oauth2TokenProvider.refreshToken(refreshToken, source)
+		// source comes in as "oauth2/gitea" and must be split
+		val sourceName = kotlin.runCatching {
+			val s = source.split("/")
+			// must start with oauth2
+			if(s[0] != "oauth2")
+				throw BadRequestResponse("Source must be prefixed with oauth2/")
+			s[1]
+		}.onFailure {
+			"Failed to parse provider from given source: $source".loge(javaClass, it)
+		}.getOrNull() ?: throw BadRequestResponse("Failed to parse provider from given source: $source")
+		val token = oauth2TokenProvider.refreshToken(refreshToken, sourceName)
+		// add the oauth2/ prefix back onto the token
+		return AuthToken(token.request, token.refresh, source)
 	}
 
     /**
