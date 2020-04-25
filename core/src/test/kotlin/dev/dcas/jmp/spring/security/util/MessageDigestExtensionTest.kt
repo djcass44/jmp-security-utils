@@ -12,20 +12,23 @@
 
 package dev.dcas.jmp.spring.security.util
 
+import dev.dcas.jmp.spring.security.props.SecurityProps
+import dev.dcas.jmp.spring.security.service.SessionEncoderFactory
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
-import java.security.MessageDigest
 
 class MessageDigestExtensionTest {
 
-	private val digest = MessageDigest.getInstance("SHA3-384")
+	private val digestFactory = SessionEncoderFactory(SecurityProps().apply {
+		hashSessions = true
+	})
 
 	@Test
 	fun `hashed value matches`() {
 		val rawText = "This is a test!"
 
-		val hash = String(digest.digest(rawText.toByteArray()))
-		assertThat(digest.matches(rawText, hash), equalTo(true))
+		val hash = digestFactory.newSessionEncoder()!!.encode(rawText)
+		assertThat(digestFactory.newSessionEncoder()!!.matches(rawText, hash), equalTo(true))
 	}
 }
