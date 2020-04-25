@@ -7,27 +7,24 @@
 package dev.dcas.jmp.spring.security.service
 
 import dev.castive.log2.logi
-import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.jwt.JwtTokenProvider
 import dev.dcas.jmp.spring.security.model.AuthToken
 import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
-import dev.dcas.jmp.spring.security.props.SecurityProps
 import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.jmp.spring.security.util.encode
 import dev.dcas.util.spring.responses.NotFoundResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.security.MessageDigest
 
 @Service
 class JwtService @Autowired constructor(
     private val userRepo: UserRepository,
     private val sessionRepo: SessionRepository,
     private val jwtTokenProvider: JwtTokenProvider,
-	private val securityProps: SecurityProps
+	private val sessionEncoderFactory: SessionEncoderFactory
 ) {
     /**
      * Creates a new token and session for a specified user
@@ -75,7 +72,7 @@ class JwtService @Autowired constructor(
     private fun createSession(user: UserEntity, provider: JwtTokenProvider): Triple<SessionEntity, String, String> {
         val request = provider.createRequestToken(user.username, user.roles)
         val refresh = provider.createRefreshToken(user.username, user.roles)
-		val sessionEncoder = sessionEncoder()
+		val sessionEncoder = sessionEncoderFactory.newSessionEncoder()
         val session = sessionRepo.create(
 			sessionEncoder?.encode(request) ?: request,
 			sessionEncoder?.encode(refresh) ?: refresh,
@@ -83,6 +80,4 @@ class JwtService @Autowired constructor(
 		)
         return Triple(session, request, refresh)
     }
-
-	private fun sessionEncoder(): MessageDigest? = if(securityProps.hashSessions) SecurityConstants.getSessionEncoder() else null
 }

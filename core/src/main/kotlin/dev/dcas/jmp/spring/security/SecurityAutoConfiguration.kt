@@ -20,6 +20,7 @@ import dev.dcas.jmp.spring.security.rest.AuthControl
 import dev.dcas.jmp.spring.security.rest.OAuth2Control
 import dev.dcas.jmp.spring.security.service.JwtService
 import dev.dcas.jmp.spring.security.service.LdapService
+import dev.dcas.jmp.spring.security.service.SessionEncoderFactory
 import dev.dcas.jmp.spring.security.service.UserDetailsService
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage
 import org.springframework.cloud.openfeign.EnableFeignClients
@@ -41,7 +42,8 @@ import org.springframework.context.annotation.Import
 	SecurityProps::class,
 	UserDetailsService::class,
 	JwtService::class,
-	LdapService::class
+	LdapService::class,
+	SessionEncoderFactory::class
 )
 @EnableFeignClients
 @AutoConfigurationPackage

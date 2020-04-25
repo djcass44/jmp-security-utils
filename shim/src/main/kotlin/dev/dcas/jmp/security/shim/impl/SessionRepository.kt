@@ -9,12 +9,11 @@ import dev.dcas.jmp.security.shim.repo.SessionRepoCustom
 import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.SessionRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
-class SessionRepository @Autowired constructor(
+class SessionRepository(
 	private val sessionRepo: SessionRepo,
 	private val sessionRepoCustom: SessionRepoCustom,
 	private val metaRepo: MetaRepo

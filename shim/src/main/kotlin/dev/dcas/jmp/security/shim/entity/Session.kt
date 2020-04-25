@@ -8,7 +8,7 @@ package dev.dcas.jmp.security.shim.entity
 
 import dev.dcas.jmp.spring.security.model.entity.SessionEntity
 import dev.dcas.util.spring.data.UUIDConverterCompat
-import java.util.*
+import java.util.UUID
 import javax.persistence.*
 
 @Entity
@@ -17,7 +17,9 @@ data class Session(
 	@Id
 	@Convert(converter = UUIDConverterCompat::class)
 	override val id: UUID,
+	@Column(length=10485760)
 	val requestToken: String,
+	@Column(length=10485760)
 	val refreshToken: String,
 	@OneToOne
 	val meta: Meta,

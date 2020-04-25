@@ -44,7 +44,7 @@ abstract class AbstractAuthenticationFilter: OncePerRequestFilter() {
 	            "Failed to locate authentication for valid token: $source".logv(javaClass)
         }
         else
-            "Failed to parse token: ${token?.ellipsize(24)}".logd(javaClass)
+            "Token is null or invalid: ${token?.ellipsize(24)}".logd(javaClass)
         // continue with the request
         filterChain.doFilter(request, response)
     }

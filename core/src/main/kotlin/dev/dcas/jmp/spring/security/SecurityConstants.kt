@@ -6,8 +6,6 @@
 
 package dev.dcas.jmp.spring.security
 
-import java.security.MessageDigest
-
 object SecurityConstants {
     const val sourceHeader = "X-Auth-Source"
     const val authHeader = "Authorization"
@@ -16,7 +14,5 @@ object SecurityConstants {
     const val sourceLdap = "ldap"
     const val sourceOAuth2 = "oauth2"
 
-	private const val DIGEST_SHA3 = "SHA3-384"
-
-	fun getSessionEncoder(): MessageDigest = MessageDigest.getInstance(DIGEST_SHA3)
+	internal const val DIGEST_SHA3 = "SHA3-384"
 }

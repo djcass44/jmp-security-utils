@@ -6,6 +6,7 @@
 
 package dev.dcas.jmp.spring.security.util
 
+import dev.dcas.util.extend.base64
 import java.security.MessageDigest
 
 /**
@@ -16,9 +17,9 @@ import java.security.MessageDigest
  * @return true if the hash of `rawText` matches `hash`
  */
 fun MessageDigest.matches(rawText: String, hash: String): Boolean {
-	return String(digest(rawText.toByteArray())) == hash
+	return encode(rawText) == hash
 }
 
 fun MessageDigest.encode(rawText: String): String {
-	return String(digest(rawText.toByteArray()))
+	return digest(rawText.toByteArray()).base64()
 }

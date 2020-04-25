@@ -22,6 +22,7 @@ import dev.dcas.jmp.spring.security.model.repo.SessionRepository
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
 import dev.dcas.jmp.spring.security.oauth2.impl.*
 import dev.dcas.jmp.spring.security.props.SecurityProps
+import dev.dcas.jmp.spring.security.service.SessionEncoderFactory
 import dev.dcas.jmp.spring.security.util.Events
 import dev.dcas.jmp.spring.security.util.Responses
 import dev.dcas.jmp.spring.security.util.encode
@@ -32,12 +33,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
-import java.security.MessageDigest
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 @Service
 class OAuth2TokenProvider(
+	private val sessionEncoderFactory: SessionEncoderFactory,
     private val oauth2Config: SecurityProps,
     private val userRepo: UserRepository,
     private val groupRepo: GroupRepository,
@@ -98,6 +99,7 @@ class OAuth2TokenProvider(
             "Unable to find wired provider with name: $source".logi(javaClass)
             return false
         }
+		"Located provider for token: ${provider.name} ($source)".logv(javaClass)
         counter++
 	    // peek the cache every now and then
         if(counter > 25) {
@@ -107,6 +109,7 @@ class OAuth2TokenProvider(
         val cached = tokenCache[token]
         if(cached != null) // if the token is cached, consider it valid
             return true
+		"Failed to locate cached token".logv(javaClass)
 	    // otherwise check the provider themselves
         if(provider.isTokenValid(token)) {
             tokenCache[token] = token
@@ -154,7 +157,7 @@ class OAuth2TokenProvider(
 		sessionRepo.disable(existingSession)
 		val token = provider.refreshToken(refreshToken)
 
-		val sessionEncoder = sessionEncoder()
+		val sessionEncoder = sessionEncoderFactory.newSessionEncoder()
 		// create the new session
 		sessionRepo.create(
 			sessionEncoder?.encode(token.accessToken) ?: token.accessToken,
@@ -174,7 +177,7 @@ class OAuth2TokenProvider(
 		val existingSession = sessionRepo.findFirstByRefreshTokenAndActiveTrue(refreshToken) ?: throw NotFoundResponse(Responses.NOT_FOUND_SESSION)
 		val token = provider.refreshToken(refreshToken)
 
-		val sessionEncoder = sessionEncoder()
+		val sessionEncoder = sessionEncoderFactory.newSessionEncoder()
 		// create the new session
 		return sessionRepo.create(
 			sessionEncoder?.encode(token.accessToken) ?: token.accessToken,
@@ -196,7 +199,7 @@ class OAuth2TokenProvider(
             "Unable to create session as we have no context of the user".logw(javaClass)
             return
         }
-		val sessionEncoder = sessionEncoder()
+		val sessionEncoder = sessionEncoderFactory.newSessionEncoder()
         // create the new session
         sessionRepo.create(
             sessionEncoder?.encode(requestToken) ?: requestToken,
@@ -206,7 +209,10 @@ class OAuth2TokenProvider(
     }
 
     override fun getAuthentication(token: String): Authentication? {
-        val session = sessionRepo.findFirstByRequestTokenAndActiveTrue(token) ?: return null
+        val session = sessionRepo.findFirstByRequestTokenAndActiveTrue(token) ?: run {
+			"Failed to find active session for token".logv(javaClass)
+			return null
+		}
         val user = UserPrincipal(session.user)
         return UsernamePasswordAuthenticationToken(user, "", user.authorities)
     }
@@ -242,6 +248,4 @@ class OAuth2TokenProvider(
     fun findProviderByName(name: String): AbstractOAuth2Provider? = providers.firstOrNull {
         it.name == name
     }
-
-	private fun sessionEncoder(): MessageDigest? = if(oauth2Config.hashSessions) SecurityConstants.getSessionEncoder() else null
 }

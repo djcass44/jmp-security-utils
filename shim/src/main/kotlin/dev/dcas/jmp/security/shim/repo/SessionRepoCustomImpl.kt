@@ -7,22 +7,23 @@
 package dev.dcas.jmp.security.shim.repo
 
 import dev.castive.log2.logi
+import dev.castive.log2.logv
 import dev.dcas.jmp.security.shim.entity.Session
 import dev.dcas.jmp.security.shim.entity.User
-import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.props.SecurityProps
+import dev.dcas.jmp.spring.security.service.SessionEncoderFactory
 import dev.dcas.jmp.spring.security.util.matches
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.security.MessageDigest
 import javax.annotation.PostConstruct
 
 @Repository
 @Transactional(readOnly = true)
 class SessionRepoCustomImpl(
 	private val sessionRepo: SessionRepo,
-	private val securityProps: SecurityProps
+	private val securityProps: SecurityProps,
+	private val sessionEncoderFactory: SessionEncoderFactory
 ): SessionRepoCustom {
 
 	@PostConstruct
@@ -31,30 +32,34 @@ class SessionRepoCustomImpl(
 	}
 
 	override fun findFirstByUserAndRefreshTokenAndActiveTrue(user: UserEntity, refreshToken: String): Session? {
-		val sessionEncoder = sessionEncoder()
 		val sessions = sessionRepo.findAllByUserAndActiveIsTrue(user as User)
 		return sessions.firstOrNull {
-			sessionEncoder?.matches(refreshToken, it.refreshToken) ?: refreshToken == it.refreshToken
+			return@firstOrNull checkTokens(refreshToken, it.refreshToken)
 		}
 	}
 
 	override fun findFirstByUserAndRequestTokenAndActiveTrue(user: UserEntity, requestToken: String): Session? {
-		val sessionEncoder = sessionEncoder()
 		val sessions = sessionRepo.findAllByUserAndActiveIsTrue(user as User)
 		return sessions.firstOrNull {
-			sessionEncoder?.matches(requestToken, it.requestToken) ?: requestToken == it.requestToken
+			return@firstOrNull checkTokens(requestToken, it.requestToken)
 		}
 	}
 
 	override fun findFirstByRequestTokenAndActiveTrue(requestToken: String): Session? {
-		val sessionEncoder = sessionEncoder()
-		val sessions = sessionRepo.findAllByActiveTrue()
+		val sessions = sessionRepo.findAllByActiveIsTrue()
+		"Found ${sessions.size} active sessions".logv(javaClass)
 		return sessions.firstOrNull {
-			kotlin.runCatching {
-				sessionEncoder?.matches(requestToken, it.requestToken) ?: requestToken == it.requestToken
-			}.getOrDefault(false)
+			return@firstOrNull checkTokens(requestToken, it.requestToken)
 		}
 	}
 
-	private fun sessionEncoder(): MessageDigest? = if(securityProps.hashSessions) SecurityConstants.getSessionEncoder() else null
+	/**
+	 * Check whether 2 tokens are equal, account for the possibility that they may be hashed
+	 * This is a weird hack because encoder?.matches ?: token == token2 would always return false
+	 */
+	private fun checkTokens(token: String, token2: String): Boolean {
+		val matches = sessionEncoderFactory.newSessionEncoder()?.matches(token, token2)
+		val matchesFallback = token == token2
+		return matches ?: matchesFallback
+	}
 }

@@ -10,11 +10,13 @@ import dev.dcas.jmp.security.shim.entity.Session
 import dev.dcas.jmp.security.shim.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
+import javax.transaction.Transactional
 
+@Transactional
 @Repository
 interface SessionRepo: JpaRepository<Session, UUID> {
 	fun findAllByUserAndActiveIsTrue(user: User): List<Session>
 	fun findFirstByRefreshTokenAndActiveTrue(refreshToken: String): Session?
-	fun findAllByActiveTrue(): List<Session>
+	fun findAllByActiveIsTrue(): List<Session>
 }
