@@ -2,4 +2,4 @@ stages:
   - test
 
 include:
-  - remote: "https://gitlab.dcas.dev/open-source/gitlab-ci-templates/-/raw/master/test/Test.gitlab-ci.yml"
+  - remote: "https://gitlab.dcas.dev/open-source/gitlab-ci-templates/-/raw/master/test/AutoTest.gitlab-ci.yml"
