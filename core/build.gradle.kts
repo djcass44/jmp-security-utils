@@ -6,7 +6,7 @@ val projectVersion: String by project
 version = projectVersion
 
 
-extra["springCloudVersion"] = "Hoxton.SR3"
+extra["springCloudVersion"] = "Hoxton.SR4"
 
 dependencyManagement {
 	imports {

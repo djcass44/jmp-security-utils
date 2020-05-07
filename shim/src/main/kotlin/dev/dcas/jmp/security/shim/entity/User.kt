@@ -12,7 +12,7 @@ import dev.castive.log2.logv
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.util.spring.data.UUIDConverterCompat
 import org.springframework.security.core.GrantedAuthority
-import java.util.*
+import java.util.UUID
 import javax.persistence.*
 
 @Entity
@@ -21,7 +21,7 @@ data class User(
 	@Id
 	@Convert(converter = UUIDConverterCompat::class)
 	override val id: UUID = UUID.randomUUID(),
-	@Column(unique = true, nullable = false)
+	@Column(unique = false, nullable = false)
 	override val username: String,
 	var displayName: String,
 	var avatarUrl: String? = null,

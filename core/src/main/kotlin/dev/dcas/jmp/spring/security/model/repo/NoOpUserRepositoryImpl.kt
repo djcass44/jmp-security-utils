@@ -14,7 +14,9 @@ class NoOpUserRepositoryImpl: UserRepository {
 
     override fun existsByUsername(username: String): Boolean = false
 
-    override fun update(username: String, data: UserProjection): UserEntity {
+	override fun existsByUsernameAndSource(username: String, source: String): Boolean = false
+
+	override fun update(username: String, data: UserProjection): UserEntity {
         throw NotImplementedError("This is a no-op bean")
     }
 

@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "2.2.5.RELEASE"
+    id("org.springframework.boot") version "2.2.6.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
 	id("dev.dcas.gradle-util") version "0.1"
-    kotlin("jvm") version "1.3.71"
-    kotlin("plugin.spring") version "1.3.71"
-    kotlin("kapt") version "1.3.71"
+    kotlin("jvm") version "1.3.72"
+    kotlin("plugin.spring") version "1.3.72"
+    kotlin("kapt") version "1.3.72"
 }
 
 group = "dev.dcas.jmp.security"
@@ -33,7 +33,7 @@ allprojects {
 	}
 	tasks {
 		withType<Wrapper> {
-			gradleVersion = "6.2.2"
+			gradleVersion = "6.3"
 			distributionType = Wrapper.DistributionType.ALL
 		}
 		withType<KotlinCompile>().all {
