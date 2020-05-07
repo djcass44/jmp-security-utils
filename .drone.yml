@@ -1,9 +1,0 @@
-kind: pipeline
-type: kubernetes
-name: default
-
-steps:
-  - name: test
-    image: harbor.v2.dcas.dev/library/gradle:jdk13
-    commands:
-      - gradle test
