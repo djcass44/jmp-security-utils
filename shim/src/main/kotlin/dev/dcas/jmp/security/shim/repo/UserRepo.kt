@@ -9,11 +9,12 @@ package dev.dcas.jmp.security.shim.repo
 import dev.dcas.jmp.security.shim.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
 interface UserRepo: JpaRepository<User, UUID> {
 	fun existsByUsername(username: String): Boolean
+	fun existsByUsernameAndSource(username: String, source: String): Boolean
 
 	fun findFirstByUsername(username: String): User?
 	fun findFirstByUsernameAndSource(username: String, source: String): User?

@@ -19,6 +19,7 @@ interface UserRepository {
     fun findFirstByUsername(username: String): UserEntity?
     fun findFirstByUsernameAndSource(username: String, source: String): UserEntity?
     fun existsByUsername(username: String): Boolean
+	fun existsByUsernameAndSource(username: String, source: String): Boolean
     fun update(username: String, data: UserProjection): UserEntity
 
     fun createWithData(source: String, username: String, data: UserProjection): UserEntity

@@ -130,7 +130,7 @@ class OAuth2TokenProvider(
         // users are prepended with oauth2 to ensure there are no collisions
         val oauthUsername = "${SecurityConstants.sourceOAuth2}/${userData.username}"
         // only create the user if they don't exist
-        if(!userRepo.existsByUsername(oauthUsername)) {
+        if(!userRepo.existsByUsernameAndSource(oauthUsername, provider.name)) {
 			"Creating user: $oauthUsername".logi(javaClass)
             // create the user
             val user = userRepo.createWithData("${SecurityConstants.sourceOAuth2}/${provider.name}", oauthUsername, userData)

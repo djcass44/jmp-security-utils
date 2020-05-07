@@ -8,12 +8,11 @@ import dev.dcas.jmp.security.shim.repo.UserRepo
 import dev.dcas.jmp.spring.security.model.UserProjection
 import dev.dcas.jmp.spring.security.model.entity.UserEntity
 import dev.dcas.jmp.spring.security.model.repo.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
-class UserRepository @Autowired constructor(
+class UserRepository(
 	private val userRepo: UserRepo,
 	private val metaRepo: MetaRepo
 ): UserRepository {
@@ -35,6 +34,8 @@ class UserRepository @Autowired constructor(
 	}
 
 	override fun existsByUsername(username: String): Boolean = userRepo.existsByUsername(username)
+
+	override fun existsByUsernameAndSource(username: String, source: String): Boolean = userRepo.existsByUsernameAndSource(username, source)
 
 	override fun findFirstByUsername(username: String): UserEntity? = userRepo.findFirstByUsername(username)
 
