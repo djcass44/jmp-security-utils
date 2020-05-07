@@ -4,7 +4,13 @@
  *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package dev.dcas.jmp.spring.security.oauth2
+/*
+ *   This Source Code Form is subject to the terms of the Mozilla Public
+ *   License, v. 2.0. If a copy of the MPL was not distributed with this
+ *   file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+package dev.dcas.jmp.spring.security.oauth2.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.scribejava.core.builder.api.DefaultApi20
@@ -40,5 +46,6 @@ class GiteaApi(private val apiUrl: String, private val objectMapper: ObjectMappe
 		return "${apiUrl}/login/oauth/authorize"
 	}
 
-	override fun getAccessTokenExtractor(): TokenExtractor<OAuth2AccessToken> = GiteaTokenExtractor(objectMapper)
+	override fun getAccessTokenExtractor(): TokenExtractor<OAuth2AccessToken> =
+		GiteaTokenExtractor(objectMapper)
 }

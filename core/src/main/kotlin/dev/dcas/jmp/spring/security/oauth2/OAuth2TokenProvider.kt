@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.castive.log2.*
 import dev.dcas.jmp.spring.security.SecurityConstants
 import dev.dcas.jmp.spring.security.client.GitHubApiClient
+import dev.dcas.jmp.spring.security.client.GitLabApiClient
 import dev.dcas.jmp.spring.security.client.GiteaApiClient
 import dev.dcas.jmp.spring.security.client.KeycloakApiClient
 import dev.dcas.jmp.spring.security.model.AuthToken
@@ -50,7 +51,8 @@ class OAuth2TokenProvider(
     private val tickDelay: Long,
 	private val githubClient: GitHubApiClient,
 	private val keycloakClient: KeycloakApiClient,
-	private val giteaClient: GiteaApiClient
+	private val giteaClient: GiteaApiClient,
+	private val gitLabClient: GitLabApiClient
 ): TokenProvider {
     // hold tokens for 60 seconds (tick every 10)
     private val tokenCache = TimedCache<String, String>(ageLimit, null, tickDelay)
@@ -74,6 +76,7 @@ class OAuth2TokenProvider(
                 "google" -> providers.add(GoogleProvider(it, objectMapper))
 				"keycloak" -> providers.add(KeycloakProvider(it, keycloakClient))
 				"gitea" -> providers.add(GiteaProvider(it, giteaClient, objectMapper))
+				"gitlab" -> providers.add(GitLabProvider(it, gitLabClient))
                 else -> "Found unsupported OAuth2 provider: ${it.name}".loga(javaClass)
             }
         }
