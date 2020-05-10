@@ -129,13 +129,14 @@ class OAuth2TokenProvider(
         }
         // users are prepended with oauth2 to ensure there are no collisions
         val oauthUsername = "${SecurityConstants.sourceOAuth2}/${userData.username}"
+		val providerName = "${SecurityConstants.sourceOAuth2}/${provider.name}"
         // only create the user if they don't exist
-        if(!userRepo.existsByUsernameAndSource(oauthUsername, provider.name)) {
+        if(!userRepo.existsByUsernameAndSource(oauthUsername, providerName)) {
 			"Creating user: $oauthUsername".logi(javaClass)
             // create the user
-            val user = userRepo.createWithData("${SecurityConstants.sourceOAuth2}/${provider.name}", oauthUsername, userData)
+            val user = userRepo.createWithData(providerName, oauthUsername, userData)
 			// fire an event for listeners
-			Events.emitter.emit.onUserCreated("${SecurityConstants.sourceOAuth2}/${provider.name}", user.username)
+			Events.emitter.emit.onUserCreated(providerName, user.username)
             // create a session for the new user
             newSession(accessToken, refreshToken, user)
         }
